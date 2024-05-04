@@ -4,6 +4,10 @@ data/*
 # generated PDFs
 *.pdf
 
+
+# Pycharm
+.idea/
+
 ### Githib Python predefined stuff
 # Byte-compiled / optimized / DLL files
 __pycache__/
