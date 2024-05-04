@@ -44,12 +44,8 @@ def filter_by_rating(puzzles_df: pandas.DataFrame, min_rating: int, max_rating: 
 
 
 def find_mate(moves: int):
-    if moves == 1:
-        return lichess_mate_puzzles[lichess_mate_puzzles['Themes'].str.contains('mateIn1')]
-    if moves == 2:
-        return lichess_mate_puzzles[lichess_mate_puzzles['Themes'].str.contains('mateIn2')]
-    if moves == 3:
-        return lichess_mate_puzzles[lichess_mate_puzzles['Themes'].str.contains('mateIn3')]
+    if moves <= 5:
+        return lichess_mate_puzzles[lichess_mate_puzzles['Themes'].str.contains(f'mateIn{moves}')]
     return lichess_mate_puzzles[(lichess_mate_puzzles['Moves'].count(' ') + 1) // 2 == moves]
 
 
