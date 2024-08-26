@@ -5,7 +5,7 @@ from typing import List, Tuple
 from reportlab.lib.units import cm
 from reportlab.pdfgen import canvas
 
-from puzzle_sheet_generator.pdf_generation.generate_pdf import PuzzleLayout, PageSettings
+from puzzle_sheet_generator.pdf_generation.PuzzleLayout import PuzzleLayout, PageSettings
 
 
 class Layout12Puzzles(PuzzleLayout):

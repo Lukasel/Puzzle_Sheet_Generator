@@ -1,3 +1,18 @@
+"""Column names and puzzle themes in the lichess puzzle database."""
+
+column_names = (
+    'PuzzleId',
+    'FEN',
+    'Moves',
+    'Rating',
+    'RatingDeviation',
+    'Popularity',
+    'NbPlays',
+    'Themes',
+    'GameUrl',
+    'OpeningTags'
+)
+
 advantage_goal_themes = {
     'equality',
     'advantage',
