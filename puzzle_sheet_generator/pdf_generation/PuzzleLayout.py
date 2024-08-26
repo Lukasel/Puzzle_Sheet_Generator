@@ -17,12 +17,16 @@ class PageSettings:
         self.pagesize = pagesizes.A4
         self.margin_left = 1.5 * cm
         self.margin_right = 1.5 * cm
+        self.margin_bottom = cm
         self.font = 'Helvetica-Bold'
         self.font_size = 18
         self.header_height = 1.5 * cm + self.font_size
 
     def margin_left_right(self):
         return self.margin_left + self.margin_right
+
+    def margin_header_footer(self):
+        return self.header_height + self.margin_bottom
 
 
 class PuzzleLayout(ABC):
@@ -45,7 +49,7 @@ class PuzzleLayout(ABC):
         drawing.height = self.image_width
         drawing.scale(scaling_x, scaling_y)
         renderPDF.draw(drawing, page_canvas, x, y - self.image_width)
-        page_canvas.circle(x + self.image_width + 0.3 * cm, y - 0.1 * self.image_width, self.move_circle_radius, stroke=1,
+        page_canvas.circle(x + self.image_width + self.move_circle_radius + 0.12 * cm, y - 0.1 * self.image_width, self.move_circle_radius, stroke=1,
                            fill=(turn == chess.BLACK))
 
 def svg_to_rgl(svg: str):

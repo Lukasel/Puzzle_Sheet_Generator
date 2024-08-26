@@ -22,6 +22,9 @@ def make_pdf_puzzle_page(outfile: str | Path, svgs: List[Tuple[str, bool]], them
     :param name: more specific theme or name of the sheet or the author, printed right side in header
     """
     page_settings = PageSettings()
+    if len(svgs) <= 6:
+        page_settings.margin_left = 2 * cm
+        page_settings.margin_right = 2 * cm
     puzzle_layout = Layout6Puzzles(page_settings) if len(svgs) <= 6 else Layout12Puzzles(page_settings)
 
     page_canvas = canvas.Canvas(
