@@ -1,7 +1,8 @@
 advantage_goal_themes = {
+    'equality',
     'advantage',
     'crushing',
-    'equality',
+    'mate'
 }
 
 endgame_type_theme = {
