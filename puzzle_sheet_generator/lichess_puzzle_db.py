@@ -86,4 +86,14 @@ tactical_themes = {
     'zugzwang'
 }
 
-all_puzzle_themes = advantage_goal_themes + endgame_type_theme + game_stage_themes + length_themes + player_themes + mate_length_themes + mate_type_themes + move_type_themes + tactical_themes
+all_puzzle_themes = (
+        advantage_goal_themes
+        | endgame_type_theme
+        | game_stage_themes
+        | length_themes
+        | player_themes
+        | mate_length_themes
+        | mate_type_themes
+        | move_type_themes
+        | tactical_themes
+)
