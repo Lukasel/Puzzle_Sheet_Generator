@@ -20,3 +20,11 @@ Download the Lichess puzzles database from https://database.lichess.org/#puzzles
 
 ## Usage
 
+CLI still in progress
+
+## Developement
+
+To update dependencies via pip:
+```commandline
+pip-compile -U
+```
