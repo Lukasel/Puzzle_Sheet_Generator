@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.dynamic]
+version = {attr = "puzzle_sheet_generator.__version__"}
+
+[project]
+name = "puzzle_sheet_generator"
+authors = [
+    {name = "Lukas Malte Monnerjahn"},
+]
+description = "An application to generate PDF chess puzzle sheets"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {file = "LICENSE"}
+keywords = ["chess"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+    "chess",
+    "cliff",
+    "lxml",
+    "pandas",
+    "reportlab",
+    "svglib"
+]
+dynamic = ["version"]
+
+[tool.setuptools.packages.find]
+where = ["."]  # list of folders that contain the packages
+include = ["puzzle_sheet_generator*", "config*"]  # package names should match these glob patterns
+exclude = ["puzzle_sheet_generator.test*"]  # exclude packages matching these glob patterns
+namespaces = false  # to disable scanning PEP 420 namespaces
+
+[project.scripts]
+puzzle_sheet_generator = "puzzle_sheet_generator.psg_cliff:main"
+
+[project.entry-points."puzzle_sheet_generator.cli"]
+config = "puzzle_sheet_generator.cli.config_command:ConfigCommand"
+print = "puzzle_sheet_generator.cli.print_command:PrintCommand"

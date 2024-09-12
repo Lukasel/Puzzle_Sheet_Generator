@@ -5,7 +5,6 @@ import reportlab.lib.pagesizes as pagesizes
 from reportlab.lib.units import cm
 from reportlab.pdfgen import canvas
 
-__author__ = 'Lukas Malte Monnerjahn'
 __all__ = 'make_pdf_puzzle_page'
 
 from pdf_generation.PuzzleLayout import PageSettings

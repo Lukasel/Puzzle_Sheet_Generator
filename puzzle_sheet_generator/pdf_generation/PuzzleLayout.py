@@ -9,7 +9,6 @@ from reportlab.graphics import renderPDF
 from reportlab.lib.units import cm
 from reportlab.pdfgen import canvas
 
-__author__ = 'Lukas Malte Monnerjahn'
 __all__ = 'PageSettings, svg_to_rgl'
 
 class PageSettings:

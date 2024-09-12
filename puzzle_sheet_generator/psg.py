@@ -6,8 +6,7 @@ import chess.svg
 from puzzle_database.lichess_puzzle_db import LichessPuzzleDB
 from pdf_generation.generate_pdf import make_pdf_puzzle_page
 
-__author__ = 'Lukas Malte Monnerjahn'
-__all__ = ('make_svg', 'make_pdf_puzzle_page')
+__all__ = ('make_svg', )
 
 
 def make_svg(fen: str, moves: str):
@@ -51,6 +50,6 @@ def make_svg(fen: str, moves: str):
 if __name__ == '__main__':
     lichess_puzzle_db = LichessPuzzleDB(config)
     puzzles = lichess_puzzle_db.find_mate(2)
-    puzzles = lichess_puzzle_db.filter_by_rating(puzzles, 1250, 1400).sample(12)
+    puzzles = lichess_puzzle_db.filter_by_rating(puzzles.puzzle_df, 1250, 1400).sample(12)
     svgs = [make_svg(puzzle['FEN'], puzzle['Moves']) for _, puzzle in puzzles.iterrows()]
     make_pdf_puzzle_page('output/test.pdf', svgs, "Matt", "Matt in 2")

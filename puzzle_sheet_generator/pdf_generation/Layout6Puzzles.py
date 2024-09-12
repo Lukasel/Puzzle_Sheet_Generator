@@ -1,5 +1,3 @@
-__author__ = 'Lukas Malte Monnerjahn'
-
 from typing import List, Tuple
 
 from reportlab.lib.units import cm
