@@ -2,11 +2,11 @@ import logging
 
 from cliff.command import Command
 
-class Print(Command):
-    """Change the programs configuration"""
+class Delete(Command):
+    """Delete a sheet or store"""
 
     def __init__(self, app, app_args):
-        super().__init__(app, app_args, 'print')
+        super().__init__(app, app_args, 'delete')
         self.log = logging.getLogger(__name__)
 
     def take_action(self, parsed_args):

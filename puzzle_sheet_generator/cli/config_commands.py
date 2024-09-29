@@ -10,8 +10,8 @@ class ChangeConfig(Command):
         self.log = logging.getLogger(__name__)
 
     def take_action(self, parsed_args):
+        self.log.debug(f'Running {self.cmd_name}')
         # todo
-        self.log.info(f'Running {self.cmd_name}')
 
 class RestoreDefaultConfig(Command):
     """Restore the default configuration values"""
@@ -20,5 +20,5 @@ class RestoreDefaultConfig(Command):
         self.log = logging.getLogger(__name__)
 
     def take_action(self, parsed_args):
+        self.log.debug(f'Running {self.cmd_name}')
         # todo
-        self.log.info(f'Running {self.cmd_name}')

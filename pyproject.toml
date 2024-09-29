@@ -43,5 +43,6 @@ puzzle_sheet_generator = "puzzle_sheet_generator.psg_cliff:main"
 [project.entry-points."puzzle_sheet_generator.cli"]
 config = "puzzle_sheet_generator.cli.config_commands:ChangeConfig"
 config-default = "puzzle_sheet_generator.cli.config_commands:RestoreDefaultConfig"
+delete = "puzzle_sheet_generator.cli.delete_command:Delete"
 print = "puzzle_sheet_generator.cli.print_command:PrintCommand"
 show = "puzzle_sheet_generator.cli.show_command:Show"
