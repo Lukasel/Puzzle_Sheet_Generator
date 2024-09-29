@@ -32,14 +32,14 @@ Possible configurations:
 
 ### Commands:
 - config: Change the programs configuration
-- filter: create a store of puzzles by filtering from the db or an existing store
-- delete: delete a sheet or store
 - list: show all available sheets or stores
 - show: show a specific sheet or store
-- store:
+- delete: delete a sheet or store
+- Store specific commands:
+  - filter: create a store of puzzles by filtering from the db or an existing store
   - sample: create a new sheet or add to a sheet by sampling a given number of puzzles from a store
   - union: unite two puzzle stores to create a mixed set of puzzles
-- sheet:
+- Sheet specific commands:
   - add: manually add a new element to a sheet in form of a FEN or SVG
   - copy: Create a new sheet with the same elements
   - remove: remove an element from a sheet
