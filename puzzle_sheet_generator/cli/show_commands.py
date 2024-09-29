@@ -5,6 +5,28 @@ from cliff.lister import Lister
 from model.puzzle_sheet import PuzzleSheet
 from model.puzzle_store import PuzzleStore
 
+# todo load column names dynamically from translation service
+puzzle_store_columns = ("id", "nb puzzles", "themes", "openings", "min_rating", "max_rating")
+
+class List(Lister):
+    """List all available stores or sheets"""
+
+    def __init__(self, app, app_args):
+        super().__init__(app, app_args, 'list')
+        self.log = logging.getLogger(__name__)
+        # todo load column names dynamically from translation service
+        self.puzzle_sheet_columns = ('SheetId', 'Name', 'Header', 'nb puzzles')
+
+    def get_parser(self, prog_name):
+        parser = super().get_parser(prog_name)
+        # todo one option each for sheets / stores
+        return parser
+
+    def take_action(self, parsed_args) -> tuple:
+        self.log.debug(f'Running {self.cmd_name}')
+        # todo
+        return ()
+
 
 class Show(Lister):
     """Show details about a store or sheet"""
@@ -13,7 +35,6 @@ class Show(Lister):
         super().__init__(app, app_args, 'show')
         self.log = logging.getLogger(__name__)
         # todo load column names dynamically from translation service
-        self.puzzle_store_columns = ("id", "nb puzzles", "themes", "openings", "min_rating", "max_rating")
         self.puzzle_sheet_columns = (
         'PuzzleId',
         'FEN',
@@ -47,7 +68,7 @@ class Show(Lister):
             store.get_min_rating(),
             store.get_max_rating()
         )
-        return self.puzzle_store_columns, (store_data,)
+        return puzzle_store_columns, (store_data,)
 
     def show_sheet(self, sheet: PuzzleSheet, sheet_id: str) -> tuple:
         self.log.info(f"Puzzle Sheet {sheet_id}:")

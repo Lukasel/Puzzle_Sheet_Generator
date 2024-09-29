@@ -3,7 +3,7 @@ import logging
 from cliff.command import Command
 
 class Print(Command):
-    """Change the programs configuration"""
+    """Print a puzzle sheet to a PDF file"""
 
     def __init__(self, app, app_args):
         super().__init__(app, app_args, 'print')
