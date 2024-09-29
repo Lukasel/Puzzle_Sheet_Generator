@@ -32,6 +32,7 @@ Possible configurations:
 
 ### Commands:
 - config: Change the programs configuration
+- config-default: Restore the default configuration
 - list: show all available sheets or stores
 - show: show a specific sheet or store
 - delete: delete a sheet or store
@@ -40,7 +41,7 @@ Possible configurations:
   - sample: create a new sheet or add to a sheet by sampling a given number of puzzles from a store
   - union: unite two puzzle stores to create a mixed set of puzzles
 - Sheet specific commands:
-  - add: manually add a new element to a sheet in form of a FEN or SVG
+  - add-to: manually add a new element to a sheet in form of a FEN or SVG
   - copy: Create a new sheet with the same elements
   - remove: remove an element from a sheet
   - reorder: reorder elements in a sheet
