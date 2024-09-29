@@ -28,25 +28,26 @@ The apps configuration should be placed in the OS standard location (e.g. /home/
 Possible configurations:
 - path to lichess puzzle database
 - flag whether to automatically save all created sheets
-- 
+- board colors
 
 ### Commands:
 - config: Change the programs configuration
 - filter: create a store of puzzles by filtering from the db or an existing store
+- delete: delete a sheet or store
+- list: show all available sheets or stores
+- show: show a specific sheet or store
 - store:
   - sample: create a new sheet or add to a sheet by sampling a given number of puzzles from a store
-  - show: show all available stores i.e. subsets of the puzzle db
   - union: unite two puzzle stores to create a mixed set of puzzles
 - sheet:
   - add: manually add a new element to a sheet in form of a FEN or SVG
   - copy: Create a new sheet with the same elements
   - remove: remove an element from a sheet
   - reorder: reorder elements in a sheet
-  - name: Change the name of a sheet
+  - name: Change the name of a sheet or store
   - header: Specify what will be printed in the header above the puzzles
   - load: load a saved sheet or a directory of saved sheets
   - save: save a sheet, so it can be reused across multiple sessions
-  - show: show all available sheets
 - print: create a PDF file from a sheet
 
 ## Developement Setup
