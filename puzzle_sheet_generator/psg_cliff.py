@@ -5,8 +5,6 @@ import puzzle_sheet_generator
 from cliff.app import App
 from cliff.commandmanager import CommandManager
 
-from puzzle_sheet_generator.cli.config_command import ConfigCommand
-from puzzle_sheet_generator.cli.print_command import PrintCommand
 
 class PSGApp(App):
     def __init__(self):
@@ -19,7 +17,10 @@ class PSGApp(App):
 
     def initialize_app(self, argv):
         # todo load config
+        # config = load_config()
         # todo load lichess database
+        # lichess_puzzle_db = LichessPuzzleDB(config)
+        # todo initialize store and sheet container
         pass
 
 

@@ -2,12 +2,11 @@ import logging
 
 from cliff.command import Command
 
-class PrintCommand(Command):
+class Print(Command):
     """Change the programs configuration"""
-    cmd_name = 'print'
 
     def __init__(self, app, app_args):
-        super().__init__(app, app_args, self.cmd_name)
+        super().__init__(app, app_args, 'print')
         self.log = logging.getLogger(__name__)
 
     def take_action(self, parsed_args):

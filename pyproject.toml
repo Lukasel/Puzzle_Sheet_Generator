@@ -41,5 +41,7 @@ namespaces = false  # to disable scanning PEP 420 namespaces
 puzzle_sheet_generator = "puzzle_sheet_generator.psg_cliff:main"
 
 [project.entry-points."puzzle_sheet_generator.cli"]
-config = "puzzle_sheet_generator.cli.config_command:ConfigCommand"
+config = "puzzle_sheet_generator.cli.config_commands:ChangeConfig"
+config-default = "puzzle_sheet_generator.cli.config_commands:RestoreDefaultConfig"
 print = "puzzle_sheet_generator.cli.print_command:PrintCommand"
+show = "puzzle_sheet_generator.cli.show_command:Show"
