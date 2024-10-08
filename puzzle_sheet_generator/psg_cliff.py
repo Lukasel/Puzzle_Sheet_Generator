@@ -26,24 +26,39 @@ class PSGApp(App):
         self.puzzle_sheet_repository = None
         self.translation_service = None
 
-    def initialize_app(self, argv):
+    def initialize_app(self, argv) -> None:
         self.translation_service = TranslationService()
-        self.LOG.info('initialising app')
+        self.LOG.debug(f'initialising {self.app_name} app')
         self.config = AppConfig(self.app_name)
-        if self.config.get(AppConfig.LICHESS_PUZZLE_DB_KEY):
-            lichess_db_path = Path(self.config.get(AppConfig.LICHESS_PUZZLE_DB_KEY))
-            if lichess_db_path.exists() and lichess_db_path.is_file():
-                self._initialize_repositories()
-            else:
-                self.LOG.warning('The Lichess Puzzle Database is not configured.')
-        else:
-            self.LOG.warning('The Lichess Puzzle Database is not configured.')
-
-    def _initialize_repositories(self):
-        lichess_puzzle_db = LichessPuzzleDB(self.config.get(AppConfig.LICHESS_PUZZLE_DB_KEY))
+        lichess_puzzle_db = self.load_lichess_puzzle_db()
         self.puzzle_store_repository = PuzzleStoreRepository("st", lichess_puzzle_db)
         self.puzzle_sheet_repository = PuzzleSheetRepository("sh")
 
+    def load_lichess_puzzle_db(self) -> LichessPuzzleDB | None:
+        if self._check_lichess_puzzle_db_path():
+            puzzle_db_path = self.config.get(AppConfig.LICHESS_PUZZLE_DB_KEY)
+            self.LOG.info(f'Loading the Lichess Puzzle DB from {puzzle_db_path}. This may take a few seconds.')
+            return LichessPuzzleDB(puzzle_db_path)
+        else:
+            # todo let the app download the lichess puzzle db automatically
+            return None
+
+    def _check_lichess_puzzle_db_path(self) -> bool:
+        lichess_puzzle_db_config = self.config.get(AppConfig.LICHESS_PUZZLE_DB_KEY)
+        if lichess_puzzle_db_config is None:
+            self.LOG.warning('The Lichess Puzzle Database is not configured.')
+            return False
+        lichess_puzzle_db_path = Path(lichess_puzzle_db_config)
+        if not lichess_puzzle_db_path.exists():
+            self.LOG.warning(f'The path to the Lichess Puzzle Database under {lichess_puzzle_db_path} does not exist.')
+            return False
+        if not lichess_puzzle_db_path.is_file():
+            self.LOG.warning(f'The path to the Lichess Puzzle Database under {lichess_puzzle_db_path} is not a file.')
+            return False
+        if not lichess_puzzle_db_path.suffix == '.csv':
+            self.LOG.warning(f'The path to the Lichess Puzzle Database under {lichess_puzzle_db_path} does not have a CSV-file suffix (.csv).')
+            return False
+        return True
 
     def clean_up(self, cmd, result, error):
         if error:

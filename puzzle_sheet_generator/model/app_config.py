@@ -11,6 +11,10 @@ class AppConfig:
     DIAGRAM_BOARD_COLORS_PATH_KEY = 'diagram_board_colors_path'
     LICHESS_PUZZLE_DB_KEY = 'lichess_puzzle_db_path'
 
+    BOOLEAN_CONFIGS = [AUTOSAVE_PUZZLE_SHEETS_KEY]
+    PATH_CONFIGS = [DIAGRAM_BOARD_COLORS_PATH_KEY, LICHESS_PUZZLE_DB_KEY]
+    CONFIG_KEYS = BOOLEAN_CONFIGS + PATH_CONFIGS
+
     def __init__(self, app_name: str):
         self.log = logging.getLogger(__name__)
         self.app_name = app_name
@@ -21,9 +25,34 @@ class AppConfig:
     def get(self, key: str):
         return self.config[key]
 
+    def set(self, key: str, value: str | bool) -> bool:
+        set_success = False
+        if key in self.BOOLEAN_CONFIGS:
+            set_success = self._set_boolean(key, value)
+        if key in self.PATH_CONFIGS:
+            set_success = self._set_path_config(key, value)
+        if set_success:
+            self.save_configuration()
+        return set_success
+
+    def _set_boolean(self, key: str, value) -> bool:
+        if type(value) == bool:
+            self.config[key] = value
+            return True
+        else:
+            return False
+
+    def _set_path_config(self, key: str, value) -> bool:
+        path = Path(str(value))
+        if not path.exists():
+            self.log.warning(f'The given path {value} for configuration key {key} does not exist.')
+            return False
+        self.config[key] = str(value)
+        return True
+
     def set_diagram_board_colors_from_file(self, board_colors_path: str | PathLike):
-        self.config[self.DIAGRAM_BOARD_COLORS_PATH_KEY] = board_colors_path
-        self._set_diagram_board_colors()
+        if self.set(self.DIAGRAM_BOARD_COLORS_PATH_KEY, board_colors_path):
+            self._set_diagram_board_colors()
 
     def _set_diagram_board_colors(self):
         try:
@@ -46,22 +75,21 @@ class AppConfig:
 
     def save_configuration(self):
         config_path = platformdirs.user_config_path(self.app_name, ensure_exists=True) / (self.app_name + '.conf')
-        self.log.info(f'Saving configuration to {config_path}')
+        self.log.debug(f'Saving configuration to {config_path}')
         try:
             with open(config_path, 'w') as config_file:
                 json.dump(self.config, config_file, ensure_ascii=False)
         except OSError as error:
-            self.log.error(f'Could not save error to {config_path}.')
+            self.log.error(f'Could not save configuration to {config_path}.')
             self.log.error(error)
 
     def load_configuration(self):
         config_path = platformdirs.user_config_path(self.app_name) / (self.app_name + '.conf')
-        self.log.info(f'trying to load config form {config_path}')
+        self.log.debug(f'trying to load config form {config_path}')
         if config_path.exists() and config_path.is_file():
-            self.log.info('loading config from file')
             self._load_configuration_from(config_path)
         else:
-            self.log.info('no config found, setting defaults')
+            self.log.info('no configuration found, setting default values')
             self.set_default_configuration_including_lichess_db()
             self.save_configuration()
 
