@@ -1,7 +1,7 @@
 from typing import TypeVar, Generic
 
-from model.puzzle_sheet import PuzzleSheet
-from model.puzzle_store import PuzzleStore
+from puzzle_sheet_generator.model.puzzle_sheet import PuzzleSheet
+from puzzle_sheet_generator.model.puzzle_store import PuzzleStore
 
 T = TypeVar('T', type(PuzzleSheet), type(PuzzleStore))
 

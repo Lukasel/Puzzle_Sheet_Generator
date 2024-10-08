@@ -4,11 +4,12 @@ A command line program for the creation of chess puzzle PDF-sheets.
 Create puzzle sheets either from the lichess puzzle database or from FEN strings.
 
 ## Installation
+Download the Lichess puzzles database from https://database.lichess.org/#puzzles and place it unzipped in the `data` directory.
+
+Then run in terminal in this project's main directory:
 ```commandline
 pip install .
 ```
-
-Download the Lichess puzzles database from https://database.lichess.org/#puzzles and place it unzipped in the `data` directory.
 
 ## Usage
 
@@ -51,7 +52,7 @@ Possible configurations:
   - save: save a sheet, so it can be reused across multiple sessions
 - print: create a PDF file from a sheet
 
-## Developement Setup
+## Development Setup
 
 In the repositories main directory set up a new python virtual environment:
 ```commandline

@@ -26,6 +26,7 @@ dependencies = [
     "cliff",
     "lxml",
     "pandas",
+    "platformdirs",
     "reportlab",
     "svglib"
 ]

@@ -1,12 +1,15 @@
 import sys
+from pathlib import Path
 
 import puzzle_sheet_generator
 
 from cliff.app import App
 from cliff.commandmanager import CommandManager
 
-from model.repository import PuzzleSheetRepository, PuzzleStoreRepository
-from service.translation_service import TranslationService
+from puzzle_sheet_generator.model.app_config import AppConfig
+from puzzle_sheet_generator.model.repository import PuzzleSheetRepository, PuzzleStoreRepository
+from puzzle_sheet_generator.puzzle_database.lichess_puzzle_db import LichessPuzzleDB
+from puzzle_sheet_generator.service.translation_service import TranslationService
 
 
 class PSGApp(App):
@@ -17,20 +20,29 @@ class PSGApp(App):
             CommandManager('puzzle_sheet_generator.cli'),
             deferred_help=True
         )
+        self.app_name = 'puzzle_sheet_generator'
+        self.config = None
         self.puzzle_store_repository = None
         self.puzzle_sheet_repository = None
         self.translation_service = None
 
     def initialize_app(self, argv):
-        # todo load config
-        # config = self.load_config()
-        # todo load lichess database
-        # lichess_puzzle_db = LichessPuzzleDB(config)
-        # todo initialize store and sheet container
-        # self.puzzle_store_repository = PuzzleStoreRepository("st", lichess_puzzle_db)
-        self.puzzle_sheet_repository = PuzzleSheetRepository("sh")
         self.translation_service = TranslationService()
-        pass
+        self.LOG.info('initialising app')
+        self.config = AppConfig(self.app_name)
+        if self.config.get(AppConfig.LICHESS_PUZZLE_DB_KEY):
+            lichess_db_path = Path(self.config.get(AppConfig.LICHESS_PUZZLE_DB_KEY))
+            if lichess_db_path.exists() and lichess_db_path.is_file():
+                self._initialize_repositories()
+            else:
+                self.LOG.warning('The Lichess Puzzle Database is not configured.')
+        else:
+            self.LOG.warning('The Lichess Puzzle Database is not configured.')
+
+    def _initialize_repositories(self):
+        lichess_puzzle_db = LichessPuzzleDB(self.config.get(AppConfig.LICHESS_PUZZLE_DB_KEY))
+        self.puzzle_store_repository = PuzzleStoreRepository("st", lichess_puzzle_db)
+        self.puzzle_sheet_repository = PuzzleSheetRepository("sh")
 
 
     def clean_up(self, cmd, result, error):

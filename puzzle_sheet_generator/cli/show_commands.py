@@ -2,8 +2,8 @@ import logging
 
 from cliff.lister import Lister
 
-from model.puzzle_sheet import PuzzleSheet
-from model.puzzle_store import PuzzleStore
+from puzzle_sheet_generator.model.puzzle_sheet import PuzzleSheet
+from puzzle_sheet_generator.model.puzzle_store import PuzzleStore
 
 # todo load column names dynamically from translation service
 puzzle_store_columns = ("id", "nb puzzles", "themes", "openings", "min_rating", "max_rating")

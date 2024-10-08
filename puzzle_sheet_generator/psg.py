@@ -1,10 +1,10 @@
-from configuration import config, diagram_board_colors
+from puzzle_sheet_generator.configuration import config, diagram_board_colors
 
 import chess
 import chess.svg
 
-from puzzle_database.lichess_puzzle_db import LichessPuzzleDB
-from pdf_generation.generate_pdf import make_pdf_puzzle_page
+from puzzle_sheet_generator.puzzle_database.lichess_puzzle_db import LichessPuzzleDB
+from puzzle_sheet_generator.pdf_generation.generate_pdf import make_pdf_puzzle_page
 
 __all__ = ('make_svg', )
 
@@ -48,7 +48,7 @@ def make_svg(fen: str, moves: str):
 
 
 if __name__ == '__main__':
-    lichess_puzzle_db = LichessPuzzleDB(config)
+    lichess_puzzle_db = LichessPuzzleDB(config['lichess_puzzle_db_path'])
     puzzles = lichess_puzzle_db.find_mate(2)
     puzzles = lichess_puzzle_db.filter_by_rating(puzzles.puzzle_df, 1250, 1400).sample(12)
     svgs = [make_svg(puzzle['FEN'], puzzle['Moves']) for _, puzzle in puzzles.iterrows()]

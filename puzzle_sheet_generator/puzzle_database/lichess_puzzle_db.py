@@ -1,12 +1,14 @@
+from os import PathLike
+
 import pandas
 
-from model.puzzle_store import PuzzleStore
+from puzzle_sheet_generator.model.puzzle_store import PuzzleStore
 
 
 class LichessPuzzleDB(PuzzleStore):
-    def __init__(self, config: dict):
+    def __init__(self, puzzle_db_path : str | PathLike):
         super().__init__(
-            pandas.read_csv(config["lichess_puzzle_db_path"], header=0, names=self.column_names),
+            pandas.read_csv(puzzle_db_path, header=0, names=self.column_names),
             'Lichess Puzzle Database'
         )
 

@@ -7,7 +7,7 @@ from reportlab.pdfgen import canvas
 
 __all__ = 'make_pdf_puzzle_page'
 
-from pdf_generation.PuzzleLayout import PageSettings
+from puzzle_sheet_generator.pdf_generation.PuzzleLayout import PageSettings
 from puzzle_sheet_generator.pdf_generation.Layout12Puzzles import Layout12Puzzles
 from puzzle_sheet_generator.pdf_generation.Layout6Puzzles import Layout6Puzzles
 
