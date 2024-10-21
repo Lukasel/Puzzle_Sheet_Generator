@@ -23,6 +23,14 @@ class Repository(Generic[T]):
         self.counter += 1
         return next_id
 
+    def get_id_for_name(self, name: str) -> str | None:
+        if name in self.items.keys():
+            return name
+        for item in self.items.values():
+            if item.name == name:
+                return item
+        return None
+
     def get_by_id(self, id: str) -> T | None:
         return self.items.get(id)
 

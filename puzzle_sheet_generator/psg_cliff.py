@@ -1,11 +1,10 @@
 import sys
 from pathlib import Path
 
-import puzzle_sheet_generator
-
 from cliff.app import App
 from cliff.commandmanager import CommandManager
 
+import puzzle_sheet_generator
 from puzzle_sheet_generator.model.app_config import AppConfig
 from puzzle_sheet_generator.model.repository import PuzzleSheetRepository, PuzzleStoreRepository
 from puzzle_sheet_generator.puzzle_database.lichess_puzzle_db import LichessPuzzleDB
@@ -21,15 +20,14 @@ class PSGApp(App):
             deferred_help=True
         )
         self.app_name = 'puzzle_sheet_generator'
-        self.config = None
-        self.puzzle_store_repository = None
-        self.puzzle_sheet_repository = None
+        self.config = AppConfig(self.app_name)
+        self.puzzle_store_repository : PuzzleStoreRepository = None
+        self.puzzle_sheet_repository : PuzzleSheetRepository = None
         self.translation_service = None
 
     def initialize_app(self, argv) -> None:
         self.translation_service = TranslationService()
         self.LOG.debug(f'initialising {self.app_name} app')
-        self.config = AppConfig(self.app_name)
         lichess_puzzle_db = self.load_lichess_puzzle_db()
         self.puzzle_store_repository = PuzzleStoreRepository("st", lichess_puzzle_db)
         self.puzzle_sheet_repository = PuzzleSheetRepository("sh")
@@ -40,7 +38,7 @@ class PSGApp(App):
             self.LOG.info(f'Loading the Lichess Puzzle DB from {puzzle_db_path}. This may take a few seconds.')
             return LichessPuzzleDB(puzzle_db_path)
         else:
-            # todo let the app download the lichess puzzle db automatically
+            # maybe todo let the app download the lichess puzzle db automatically
             return None
 
     def _check_lichess_puzzle_db_path(self) -> bool:

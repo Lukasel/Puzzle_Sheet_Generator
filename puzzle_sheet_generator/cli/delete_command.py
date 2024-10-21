@@ -2,14 +2,15 @@ import logging
 
 from cliff.command import Command
 
-from psg_cliff import PSGApp
+from puzzle_sheet_generator.psg_cliff import PSGApp
 
 
 class Delete(Command):
     """Delete a sheet or store"""
 
-    def __init__(self, app, app_args):
+    def __init__(self, app: PSGApp, app_args):
         super().__init__(app, app_args, 'delete')
+        self.app = app
         self.log = logging.getLogger(__name__)
 
     def get_parser(self, prog_name):

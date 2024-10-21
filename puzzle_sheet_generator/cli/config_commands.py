@@ -3,13 +3,15 @@ import logging
 from cliff.command import Command
 
 from puzzle_sheet_generator.model.app_config import AppConfig
+from puzzle_sheet_generator.psg_cliff import PSGApp
 
 
 class ChangeConfig(Command):
     """Change the programs configuration"""
 
-    def __init__(self, app, app_args):
+    def __init__(self, app: PSGApp, app_args):
         super().__init__(app, app_args, 'config')
+        self.app = app
         self.log = logging.getLogger(__name__)
 
     def get_parser(self, prog_name):
