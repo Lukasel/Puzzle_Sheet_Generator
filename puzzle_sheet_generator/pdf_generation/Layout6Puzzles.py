@@ -15,7 +15,7 @@ class Layout6Puzzles(PuzzleLayout):
         self.header_to_content_margin = 0.8 * cm
         self.content_to_footer_margin = 0.5 * cm
 
-    def place(self, svgs: List[Tuple[str, bool]], page_canvas: canvas.Canvas):
+    def place(self, svgs: List[Tuple[str, bool]], page_canvas: canvas.Canvas) -> None:
         self.image_width = (self.page_settings.pagesize[1]
                             - self.page_settings.margin_header_footer()
                             - self.header_to_content_margin

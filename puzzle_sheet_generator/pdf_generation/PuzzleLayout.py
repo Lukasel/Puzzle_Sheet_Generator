@@ -6,6 +6,7 @@ import reportlab.lib.pagesizes as pagesizes
 import svglib.svglib as svglib
 from lxml import etree
 from reportlab.graphics import renderPDF
+from reportlab.graphics.shapes import Drawing
 from reportlab.lib.units import cm
 from reportlab.pdfgen import canvas
 
@@ -21,10 +22,10 @@ class PageSettings:
         self.font_size = 18
         self.header_height = 1.5 * cm + self.font_size
 
-    def margin_left_right(self):
+    def margin_left_right(self) -> float:
         return self.margin_left + self.margin_right
 
-    def margin_header_footer(self):
+    def margin_header_footer(self) -> float:
         return self.header_height + self.margin_bottom
 
 
@@ -37,10 +38,10 @@ class PuzzleLayout(ABC):
         self.image_width = None
 
     @abstractmethod
-    def place(self, svgs: List[Tuple[str, bool]], page_canvas: canvas.Canvas):
+    def place(self, svgs: List[Tuple[str, bool]], page_canvas: canvas.Canvas) -> None:
         pass
 
-    def _place_puzzle(self, svg: str, turn: bool, x: float, y: float, page_canvas: canvas.Canvas):
+    def _place_puzzle(self, svg: str, turn: bool, x: float, y: float, page_canvas: canvas.Canvas) -> None:
         drawing = svg_to_rgl(svg)
         scaling_x = self.image_width / drawing.width
         scaling_y = self.image_width / drawing.height
@@ -51,7 +52,7 @@ class PuzzleLayout(ABC):
         page_canvas.circle(x + self.image_width + self.move_circle_radius + 0.12 * cm, y - 0.1 * self.image_width, self.move_circle_radius, stroke=1,
                            fill=(turn == chess.BLACK))
 
-def svg_to_rgl(svg: str):
+def svg_to_rgl(svg: str) -> Drawing | None:
     """
     Transform an SVG to a ReportLab Graphics Drawing object
     :param svg: SVG string

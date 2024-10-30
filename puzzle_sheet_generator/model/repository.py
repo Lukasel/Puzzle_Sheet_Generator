@@ -15,10 +15,10 @@ class Repository(Generic[T]):
         for item in items:
             self.add(item)
 
-    def add(self, item: T):
+    def add(self, item: T) -> None:
         self.items[self._next_id()] = item
 
-    def _next_id(self):
+    def _next_id(self) -> str:
         next_id = self.id_prefix + str(self.counter)
         self.counter += 1
         return next_id
@@ -40,7 +40,7 @@ class Repository(Generic[T]):
                 return item
         return None
 
-    def delete_by_id(self, id):
+    def delete_by_id(self, id) -> None:
         del self.items[id]
 
 
@@ -49,12 +49,12 @@ class PuzzleStoreRepository(Repository[PuzzleStore]):
         super().__init__(id_prefix, [main_store])
         self.lichess_db_key = self.id_prefix + "0"
 
-    def delete_by_id(self, id):
+    def delete_by_id(self, id) -> None:
         if id == self.lichess_db_key:
             raise "Can't delete the Lichess Puzzle Database."
         del self.items[id]
 
-    def reset_main_store(self, main_store: PuzzleStore):
+    def reset_main_store(self, main_store: PuzzleStore) -> None:
         self.items[self.lichess_db_key] = main_store
 
 class PuzzleSheetRepository(Repository[PuzzleSheet]):

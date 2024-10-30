@@ -58,7 +58,7 @@ class PSGApp(App):
             return False
         return True
 
-    def clean_up(self, cmd, result, error):
+    def clean_up(self, cmd, result, error) -> None:
         if error:
             self.LOG.error(f'An error occurred: {error}')
 

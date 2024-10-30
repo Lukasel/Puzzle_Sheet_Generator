@@ -12,7 +12,7 @@ from puzzle_sheet_generator.pdf_generation.Layout12Puzzles import Layout12Puzzle
 from puzzle_sheet_generator.pdf_generation.Layout6Puzzles import Layout6Puzzles
 
 
-def make_pdf_puzzle_page(outfile: str | Path, svgs: List[Tuple[str, bool]], theme: str, name: str):
+def make_pdf_puzzle_page(outfile: str | Path, svgs: List[Tuple[str, bool]], theme: str, name: str) -> None:
     """
     Create a PDF file with up to 12 chess puzzles
     :param outfile: path to output
@@ -35,7 +35,7 @@ def make_pdf_puzzle_page(outfile: str | Path, svgs: List[Tuple[str, bool]], them
     page_canvas.save()
 
 
-def make_header(page_canvas: canvas.Canvas, page_settings: PageSettings, left_text: str, right_text: str):
+def make_header(page_canvas: canvas.Canvas, page_settings: PageSettings, left_text: str, right_text: str) -> None:
     text_height = page_settings.pagesize[1] - cm - page_settings.font_size
     page_canvas.setFont(page_settings.font, page_settings.font_size)
     page_canvas.drawString(page_settings.pagesize[0] * 0.15, text_height, left_text)

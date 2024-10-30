@@ -11,7 +11,7 @@ class Filter(Command):
         self.app = app
         self.log = logging.getLogger(__name__)
 
-    def take_action(self, parsed_args):
+    def take_action(self, parsed_args) -> None:
         self.log.debug(f'Running {self.cmd_name}')
         # todo
 
@@ -23,7 +23,7 @@ class Sample(Command):
         self.app = app
         self.log = logging.getLogger(__name__)
 
-    def take_action(self, parsed_args):
+    def take_action(self, parsed_args) -> None:
         self.log.debug(f'Running {self.cmd_name}')
         # todo
 
@@ -34,6 +34,6 @@ class Union(Command):
         self.app = app
         self.log = logging.getLogger(__name__)
 
-    def take_action(self, parsed_args):
+    def take_action(self, parsed_args) -> None:
         self.log.debug(f'Running {self.cmd_name}')
         # todo

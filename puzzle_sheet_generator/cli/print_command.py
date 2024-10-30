@@ -1,4 +1,5 @@
 import logging
+from argparse import ArgumentParser
 
 from cliff.command import Command
 
@@ -13,11 +14,11 @@ class Print(Command):
         self.app = app
         self.log = logging.getLogger(__name__)
 
-    def get_parser(self, prog_name):
+    def get_parser(self, prog_name) -> ArgumentParser:
         parser = super().get_parser(prog_name)
         parser.add_argument('sheet')
         return parser
 
-    def take_action(self, parsed_args):
+    def take_action(self, parsed_args) -> None:
         self.log.debug(f'Running {self.cmd_name}')
         # todo

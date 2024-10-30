@@ -13,7 +13,7 @@ class Layout12Puzzles(PuzzleLayout):
         self.vertical_skip = 1.2 * cm
         self.header_to_content_margin = 0.8 * cm
 
-    def place(self, svgs: List[Tuple[str, bool]], page_canvas: canvas.Canvas):
+    def place(self, svgs: List[Tuple[str, bool]], page_canvas: canvas.Canvas) -> None:
         self.image_width = (self.page_settings.pagesize[0] - self.page_settings.margin_left_right() - 2 * self.horizontal_skip) / 3
         horizontal_image_spacing = self.image_width + self.horizontal_skip
         vertical_image_spacing = self.image_width + self.vertical_skip

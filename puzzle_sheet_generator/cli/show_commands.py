@@ -1,4 +1,5 @@
 import logging
+from argparse import ArgumentParser
 
 from cliff.lister import Lister
 
@@ -19,7 +20,7 @@ class List(Lister):
         # todo load column names dynamically from translation service
         self.puzzle_sheet_columns = ('SheetId', 'Name', 'Header', 'nb puzzles')
 
-    def get_parser(self, prog_name):
+    def get_parser(self, prog_name) -> ArgumentParser:
         parser = super().get_parser(prog_name)
         parser.add_argument('type', choices=['sh', 'sheets', 'st', 'stores'])
         return parser
@@ -59,7 +60,7 @@ class Show(Lister):
         'OpeningTags'
     )
 
-    def get_parser(self, prog_name):
+    def get_parser(self, prog_name) -> ArgumentParser:
         parser = super().get_parser(prog_name)
         parser.add_argument('name')
         return parser

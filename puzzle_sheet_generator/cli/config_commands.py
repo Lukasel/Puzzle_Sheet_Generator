@@ -1,4 +1,5 @@
 import logging
+from argparse import ArgumentParser
 
 from cliff.command import Command
 
@@ -14,13 +15,13 @@ class ChangeConfig(Command):
         self.app = app
         self.log = logging.getLogger(__name__)
 
-    def get_parser(self, prog_name):
+    def get_parser(self, prog_name) -> ArgumentParser:
         parser = super().get_parser(prog_name)
         parser.add_argument('config_key', choices=AppConfig.CONFIG_KEYS)
         parser.add_argument('value')
         return parser
 
-    def take_action(self, parsed_args):
+    def take_action(self, parsed_args) -> None:
         self.log.debug(f'Running {self.cmd_name}')
         if parsed_args.config_key == AppConfig.LICHESS_PUZZLE_DB_KEY:
             if self.app.config.set(parsed_args.config_key, parsed_args.value):
@@ -52,6 +53,6 @@ class RestoreDefaultConfig(Command):
         super().__init__(app, app_args, 'config-default')
         self.log = logging.getLogger(__name__)
 
-    def take_action(self, parsed_args):
+    def take_action(self, parsed_args) -> None:
         self.log.debug(f'Running {self.cmd_name}')
         self.app.config.set_default_configuration()

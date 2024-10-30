@@ -1,3 +1,5 @@
+from numbers import Number
+
 import pandas
 
 class PuzzleStore:
@@ -18,24 +20,24 @@ class PuzzleStore:
         self.puzzle_df = puzzle_df
         self.name = name
 
-    def __len__(self):
+    def __len__(self) -> int:
         return self.puzzle_df.__len__()
 
-    def get_themes(self):
+    def get_themes(self) -> list[str]:
         # todo
-        return "mixed"
+        return ["mixed"]
 
-    def get_openings(self):
+    def get_openings(self) -> list[str]:
         # todo
-        return "mixed"
+        return ["mixed"]
 
-    def get_min_rating(self):
+    def get_min_rating(self) -> int:
         return self.puzzle_df['Rating'].min()
 
-    def get_max_rating(self):
+    def get_max_rating(self) -> int:
         return self.puzzle_df['Rating'].max()
 
-    def get_median_rating(self):
+    def get_median_rating(self) -> Number:
         return self.puzzle_df['Rating'].median()
 
     @staticmethod

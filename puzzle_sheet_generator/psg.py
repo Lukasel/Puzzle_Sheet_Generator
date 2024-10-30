@@ -9,7 +9,7 @@ from puzzle_sheet_generator.pdf_generation.generate_pdf import make_pdf_puzzle_p
 __all__ = ('make_svg', )
 
 
-def make_svg(fen: str, moves: str):
+def make_svg(fen: str, moves: str) -> tuple[str, bool]:
     """
     Generate an SVG image of a chess position.
     :param fen: FEN string of the position
