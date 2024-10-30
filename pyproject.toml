@@ -14,7 +14,7 @@ description = "An application to generate PDF chess puzzle sheets"
 readme = "README.md"
 requires-python = ">=3.10"
 license = {file = "LICENSE"}
-keywords = ["chess"]
+keywords = ["chess", "chess puzzle"]
 classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
@@ -41,6 +41,7 @@ namespaces = false  # to disable scanning PEP 420 namespaces
 [project.scripts]
 puzzle_sheet_generator = "puzzle_sheet_generator.psg_cliff:main"
 
+# the cli entry point become the user commands in the interactive cli app
 [project.entry-points."puzzle_sheet_generator.cli"]
 config = "puzzle_sheet_generator.cli.config_commands:ChangeConfig"
 config-default = "puzzle_sheet_generator.cli.config_commands:RestoreDefaultConfig"
