@@ -1,4 +1,4 @@
-from typing import TypeVar, Generic
+from typing import Generic, TypeVar
 
 from puzzle_sheet_generator.model.puzzle_sheet import PuzzleSheet
 from puzzle_sheet_generator.model.puzzle_store import PuzzleStore
@@ -6,7 +6,7 @@ from puzzle_sheet_generator.model.puzzle_store import PuzzleStore
 T = TypeVar('T', type(PuzzleSheet), type(PuzzleStore))
 
 class Repository(Generic[T]):
-    def __init__(self, id_prefix: str, items: list[T] = None):
+    def __init__(self, id_prefix: str, items: list[T] | None = None):
         if items is None:
             items = []
         self.counter = 0
@@ -24,7 +24,7 @@ class Repository(Generic[T]):
         return next_id
 
     def get_id_for_name(self, name: str) -> str | None:
-        if name in self.items.keys():
+        if name in self.items:
             return name
         for item in self.items.values():
             if item.name == name:
@@ -51,7 +51,7 @@ class PuzzleStoreRepository(Repository[PuzzleStore]):
 
     def delete_by_id(self, id) -> None:
         if id == self.lichess_db_key:
-            raise "Can't delete the Lichess Puzzle Database."
+            raise Exception("Can't delete the Lichess Puzzle Database.")
         del self.items[id]
 
     def reset_main_store(self, main_store: PuzzleStore) -> None:

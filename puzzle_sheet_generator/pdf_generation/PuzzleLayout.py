@@ -1,16 +1,16 @@
 from abc import ABC, abstractmethod
-from typing import List, Tuple
 
 import chess
-import reportlab.lib.pagesizes as pagesizes
-import svglib.svglib as svglib
 from lxml import etree
 from reportlab.graphics import renderPDF
 from reportlab.graphics.shapes import Drawing
+from reportlab.lib import pagesizes
 from reportlab.lib.units import cm
 from reportlab.pdfgen import canvas
+from svglib import svglib
 
-__all__ = 'PageSettings, svg_to_rgl'
+__all__ = ('PageSettings', 'svg_to_rgl')
+
 
 class PageSettings:
     def __init__(self):
@@ -38,7 +38,7 @@ class PuzzleLayout(ABC):
         self.image_width = None
 
     @abstractmethod
-    def place(self, svgs: List[Tuple[str, bool]], page_canvas: canvas.Canvas) -> None:
+    def place(self, svgs: list[tuple[str, bool]], page_canvas: canvas.Canvas) -> None:
         pass
 
     def _place_puzzle(self, svg: str, turn: bool, x: float, y: float, page_canvas: canvas.Canvas) -> None:
@@ -49,8 +49,14 @@ class PuzzleLayout(ABC):
         drawing.height = self.image_width
         drawing.scale(scaling_x, scaling_y)
         renderPDF.draw(drawing, page_canvas, x, y - self.image_width)
-        page_canvas.circle(x + self.image_width + self.move_circle_radius + 0.12 * cm, y - 0.1 * self.image_width, self.move_circle_radius, stroke=1,
-                           fill=(turn == chess.BLACK))
+        page_canvas.circle(
+            x + self.image_width + self.move_circle_radius + 0.12 * cm,
+            y - 0.1 * self.image_width,
+            self.move_circle_radius,
+            stroke=1,
+            fill=(turn == chess.BLACK)
+        )
+
 
 def svg_to_rgl(svg: str) -> Drawing | None:
     """

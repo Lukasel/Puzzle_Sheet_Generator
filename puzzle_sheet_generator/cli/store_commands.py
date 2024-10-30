@@ -4,6 +4,7 @@ from cliff.command import Command
 
 from puzzle_sheet_generator.psg_cliff import PSGApp
 
+
 class Filter(Command):
     """Create a store of puzzles by filtering from the db or an existing store"""
     def __init__(self, app: PSGApp, app_args):

@@ -13,7 +13,7 @@ from puzzle_sheet_generator.service.translation_service import TranslationServic
 
 class PSGApp(App):
     def __init__(self):
-        super(PSGApp, self).__init__(
+        super().__init__(
             puzzle_sheet_generator.__doc__.replace("\n", " ").strip(),
             puzzle_sheet_generator.__version__,
             CommandManager('puzzle_sheet_generator.cli'),
@@ -53,8 +53,9 @@ class PSGApp(App):
         if not lichess_puzzle_db_path.is_file():
             self.LOG.warning(f'The path to the Lichess Puzzle Database under {lichess_puzzle_db_path} is not a file.')
             return False
-        if not lichess_puzzle_db_path.suffix == '.csv':
-            self.LOG.warning(f'The path to the Lichess Puzzle Database under {lichess_puzzle_db_path} does not have a CSV-file suffix (.csv).')
+        if lichess_puzzle_db_path.suffix != ".csv":
+            self.LOG.warning(f'The path to the Lichess Puzzle Database under {lichess_puzzle_db_path}'
+                             f' does not have a CSV-file suffix (.csv).')
             return False
         return True
 

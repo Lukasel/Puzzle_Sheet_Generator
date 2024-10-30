@@ -1,8 +1,8 @@
 import json
+import logging
 from os import PathLike
 from pathlib import Path
 
-import logging
 import platformdirs
 
 
@@ -11,8 +11,8 @@ class AppConfig:
     DIAGRAM_BOARD_COLORS_PATH_KEY = 'diagram_board_colors_path'
     LICHESS_PUZZLE_DB_KEY = 'lichess_puzzle_db_path'
 
-    BOOLEAN_CONFIGS = [AUTOSAVE_PUZZLE_SHEETS_KEY]
-    PATH_CONFIGS = [DIAGRAM_BOARD_COLORS_PATH_KEY, LICHESS_PUZZLE_DB_KEY]
+    BOOLEAN_CONFIGS = (AUTOSAVE_PUZZLE_SHEETS_KEY,)
+    PATH_CONFIGS = (DIAGRAM_BOARD_COLORS_PATH_KEY, LICHESS_PUZZLE_DB_KEY)
     CONFIG_KEYS = BOOLEAN_CONFIGS + PATH_CONFIGS
 
     def __init__(self, app_name: str):
@@ -36,7 +36,7 @@ class AppConfig:
         return set_success
 
     def _set_boolean(self, key: str, value) -> bool:
-        if type(value) == bool:
+        if type(value) is bool:
             self.config[key] = value
             return True
         else:
@@ -56,10 +56,11 @@ class AppConfig:
 
     def _set_diagram_board_colors(self) -> None:
         try:
-            with open(self.config[self.DIAGRAM_BOARD_COLORS_PATH_KEY]) as file:
+            with self.config[self.DIAGRAM_BOARD_COLORS_PATH_KEY].open('r') as file:
                 self.diagram_board_colors = json.load(file)
         except OSError as error:
-            self.log.error(f'Could not load diagram board colors from {self.config[self.DIAGRAM_BOARD_COLORS_PATH_KEY]}')
+            self.log.error(f'Could not load diagram board colors '
+                           f'from {self.config[self.DIAGRAM_BOARD_COLORS_PATH_KEY]}')
             self.log.error(error)
 
     def set_default_configuration(self) -> None:

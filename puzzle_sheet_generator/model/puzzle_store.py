@@ -2,6 +2,7 @@ from numbers import Number
 
 import pandas
 
+
 class PuzzleStore:
     column_names = (
         'PuzzleId',

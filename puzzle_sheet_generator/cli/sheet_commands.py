@@ -4,6 +4,7 @@ from cliff.command import Command
 
 from puzzle_sheet_generator.psg_cliff import PSGApp
 
+
 class AddTo(Command):
     """Add an element to a specific sheet"""
 
