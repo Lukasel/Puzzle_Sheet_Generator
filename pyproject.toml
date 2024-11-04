@@ -40,7 +40,7 @@ namespaces = false  # to disable scanning PEP 420 namespaces
 [project.scripts]
 puzzle_sheet_generator = "puzzle_sheet_generator.psg_cliff:main"
 
-# the cli entry point become the user commands in the interactive cli app
+# the cli entry points become the user commands in the interactive cli app
 [project.entry-points."puzzle_sheet_generator.cli"]
 config = "puzzle_sheet_generator.cli.config_commands:ChangeConfig"
 config-default = "puzzle_sheet_generator.cli.config_commands:RestoreDefaultConfig"
