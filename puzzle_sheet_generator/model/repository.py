@@ -15,13 +15,20 @@ class Repository(Generic[T]):
         for item in items:
             self.add(item)
 
-    def add(self, item: T) -> None:
-        self.items[self._next_id()] = item
+    def add(self, item: T) -> str:
+        """Adds an element to the repository and returns its new id in the repository."""
+        element_id = self._next_id()
+        self.items[element_id] = item
+        return element_id
 
     def _next_id(self) -> str:
         next_id = self.id_prefix + str(self.counter)
         self.counter += 1
         return next_id
+
+    def get(self, id_or_name: str):
+        element_id = self.get_id_for_name(id_or_name)
+        return self.get_by_id(element_id)
 
     def get_id_for_name(self, name: str) -> str | None:
         if name in self.items:
@@ -31,8 +38,8 @@ class Repository(Generic[T]):
                 return item
         return None
 
-    def get_by_id(self, id: str) -> T | None:
-        return self.items.get(id)
+    def get_by_id(self, element_id: str) -> T | None:
+        return self.items.get(element_id)
 
     def get_by_name(self, name: str) -> T | None:
         for item in self.items.values():
@@ -40,8 +47,8 @@ class Repository(Generic[T]):
                 return item
         return None
 
-    def delete_by_id(self, id) -> None:
-        del self.items[id]
+    def delete_by_id(self, element_id) -> None:
+        del self.items[element_id]
 
 
 class PuzzleStoreRepository(Repository[PuzzleStore]):
@@ -49,10 +56,10 @@ class PuzzleStoreRepository(Repository[PuzzleStore]):
         super().__init__(id_prefix, [main_store])
         self.lichess_db_key = self.id_prefix + "0"
 
-    def delete_by_id(self, id) -> None:
-        if id == self.lichess_db_key:
+    def delete_by_id(self, element_id) -> None:
+        if element_id == self.lichess_db_key:
             raise Exception("Can't delete the Lichess Puzzle Database.")
-        del self.items[id]
+        del self.items[element_id]
 
     def reset_main_store(self, main_store: PuzzleStore) -> None:
         self.items[self.lichess_db_key] = main_store
