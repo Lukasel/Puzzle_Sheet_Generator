@@ -1,3 +1,4 @@
+from collections.abc import Collection
 from numbers import Number
 from typing import Self
 
@@ -69,9 +70,45 @@ class PuzzleStore:
                           & (puzzles_df['Rating'] <= max_rating)]
 
     @staticmethod
-    def find_theme(puzzles_df: pandas.DataFrame, theme: str) -> pandas.DataFrame:
-        return puzzles_df[puzzles_df['Themes'].str.contains(theme)]
+    def filter_by_moves(puzzles_df: pandas.DataFrame, min_moves: int, max_moves: int) -> pandas.DataFrame:
+        return puzzles_df[((puzzles_df['Moves'].str.count(' ') + 1) // 2 >= min_moves)
+                          & ((puzzles_df['Moves'].str.count(' ') + 1) // 2 <= max_moves)]
 
     @staticmethod
-    def find_opening(puzzles_df: pandas.DataFrame, opening_tag: str) -> pandas.DataFrame:
-        return puzzles_df[puzzles_df['OpeningTags'].str.contains(opening_tag)]
+    def filter_by_themes_any_match(puzzles_df: pandas.DataFrame, themes: Collection[str]) -> pandas.DataFrame:
+        regex_pattern = PuzzleStore.build_regex_pattern(themes)
+        return puzzles_df[puzzles_df['Themes'].str.contains(regex_pattern)]
+
+    @staticmethod
+    def filter_by_themes_all_match(puzzles_df: pandas.DataFrame, themes: Collection[str]) -> pandas.DataFrame:
+        regex_pattern = PuzzleStore.build_regex_pattern(themes)
+        expected_matches = len(themes)
+        return puzzles_df[puzzles_df['Themes'].str.count(regex_pattern) == expected_matches]
+
+    @staticmethod
+    def filter_by_opening_tags_any_match(
+            puzzles_df: pandas.DataFrame,
+            opening_tags: Collection[str]
+    ) -> pandas.DataFrame:
+        regex_pattern = PuzzleStore.build_regex_pattern(opening_tags)
+        return puzzles_df[puzzles_df['OpeningTags'].str.contains(regex_pattern)]
+
+    @staticmethod
+    def filter_by_opening_tags_all_match(
+            puzzles_df: pandas.DataFrame,
+            opening_tags: Collection[str]
+    ) -> pandas.DataFrame:
+        regex_pattern = PuzzleStore.build_regex_pattern(opening_tags)
+        expected_matches = len(opening_tags)
+        return puzzles_df[puzzles_df['OpeningTags'].str.count(regex_pattern) == expected_matches]
+
+    @staticmethod
+    def build_regex_pattern(tags: Collection[str]) -> str:
+        regex = r''
+        for index, tag in enumerate(tags):
+            # \b matches the word boundary, i.e. non-alpha-numerical and whitespace characters,
+            # as well as beginning and end of a line
+            if index != 0:
+                regex += r'|'
+            regex += r'\b' + tag + r'\b'
+        return regex

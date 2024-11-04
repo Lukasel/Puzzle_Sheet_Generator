@@ -31,6 +31,7 @@ class PSGApp(App):
         lichess_puzzle_db = self.load_lichess_puzzle_db()
         self.puzzle_store_repository = PuzzleStoreRepository("st", lichess_puzzle_db)
         self.puzzle_sheet_repository = PuzzleSheetRepository("sh")
+        self.LOG.info('The puzzle sheet generator app is ready.')
 
     def load_lichess_puzzle_db(self) -> LichessPuzzleDB | None:
         if self._check_lichess_puzzle_db_path():

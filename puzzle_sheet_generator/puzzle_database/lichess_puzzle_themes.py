@@ -1,4 +1,5 @@
 """Column names and puzzle themes in the lichess puzzle database."""
+from collections.abc import Iterable
 
 advantage_goal_themes = {
     'equality',
@@ -99,3 +100,18 @@ all_puzzle_themes = (
         | move_type_themes
         | tactical_themes
 )
+
+casefold_puzzle_themes: dict[str, str] = {theme.casefold(): theme for theme in all_puzzle_themes}
+
+
+def to_canonical_form(theme: str) -> str | None:
+    return casefold_puzzle_themes.get(theme.casefold())
+
+
+def to_canonical_forms(themes: Iterable[str]) -> set[str]:
+    canonical_forms = set()
+    for theme in themes:
+        canonical_form = to_canonical_form(theme)
+        if canonical_form is not None:
+            canonical_forms.add(canonical_form)
+    return canonical_forms
