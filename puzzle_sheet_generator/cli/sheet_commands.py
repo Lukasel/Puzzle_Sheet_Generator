@@ -1,4 +1,5 @@
 import logging
+from argparse import Namespace
 
 from cliff.command import Command
 
@@ -25,7 +26,7 @@ class Copy(Command):
         self.app = app
         self.log = logging.getLogger(__name__)
 
-    def take_action(self, parsed_args) -> None:
+    def take_action(self, parsed_args: Namespace) -> None:
         self.log.debug(f'Running {self.cmd_name}')
         # todo
 
@@ -37,7 +38,7 @@ class Remove(Command):
         self.app = app
         self.log = logging.getLogger(__name__)
 
-    def take_action(self, parsed_args) -> None:
+    def take_action(self, parsed_args: Namespace) -> None:
         self.log.debug(f'Running {self.cmd_name}')
         # todo
 
@@ -49,7 +50,7 @@ class Reorder(Command):
         self.app = app
         self.log = logging.getLogger(__name__)
 
-    def take_action(self, parsed_args) -> None:
+    def take_action(self, parsed_args: Namespace) -> None:
         self.log.debug(f'Running {self.cmd_name}')
         # todo
 
@@ -61,7 +62,7 @@ class Name(Command):
         self.app = app
         self.log = logging.getLogger(__name__)
 
-    def take_action(self, parsed_args) -> None:
+    def take_action(self, parsed_args: Namespace) -> None:
         self.log.debug(f'Running {self.cmd_name}')
         # todo
 
@@ -73,7 +74,7 @@ class Header(Command):
         self.app = app
         self.log = logging.getLogger(__name__)
 
-    def take_action(self, parsed_args) -> None:
+    def take_action(self, parsed_args: Namespace) -> None:
         self.log.debug(f'Running {self.cmd_name}')
         # todo
 
@@ -85,7 +86,7 @@ class Save(Command):
         self.app = app
         self.log = logging.getLogger(__name__)
 
-    def take_action(self, parsed_args) -> None:
+    def take_action(self, parsed_args: Namespace) -> None:
         self.log.debug(f'Running {self.cmd_name}')
         # todo
 
@@ -97,6 +98,6 @@ class Load(Command):
         self.app = app
         self.log = logging.getLogger(__name__)
 
-    def take_action(self, parsed_args) -> None:
+    def take_action(self, parsed_args: Namespace) -> None:
         self.log.debug(f'Running {self.cmd_name}')
         # todo

@@ -1,5 +1,5 @@
 import logging
-from argparse import ArgumentParser
+from argparse import ArgumentParser, Namespace
 
 from cliff.command import Command
 
@@ -19,6 +19,6 @@ class Print(Command):
         parser.add_argument('sheet')
         return parser
 
-    def take_action(self, parsed_args) -> None:
+    def take_action(self, parsed_args: Namespace) -> None:
         self.log.debug(f'Running {self.cmd_name}')
         # todo

@@ -1,5 +1,5 @@
 import logging
-from argparse import ArgumentParser
+from argparse import ArgumentParser, Namespace
 
 from cliff.lister import Lister
 
@@ -25,7 +25,7 @@ class List(Lister):
         parser.add_argument('type', choices=['sh', 'sheets', 'st', 'stores'])
         return parser
 
-    def take_action(self, parsed_args) -> tuple:
+    def take_action(self, parsed_args: Namespace) -> tuple:
         self.log.debug(f'Running {self.cmd_name}')
         # todo
         return ()
@@ -65,7 +65,7 @@ class Show(Lister):
         parser.add_argument('name')
         return parser
 
-    def take_action(self, parsed_args) -> tuple:
+    def take_action(self, parsed_args: Namespace) -> tuple:
         self.log.debug(f'Running {self.cmd_name} for name {parsed_args.name}')
         store_id = self.app.puzzle_store_repository.get_id_for_name(parsed_args.name)
         sheet_id = self.app.puzzle_sheet_repository.get_id_for_name(parsed_args.name)

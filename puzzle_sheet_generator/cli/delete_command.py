@@ -1,5 +1,5 @@
 import logging
-from argparse import ArgumentParser
+from argparse import ArgumentParser, Namespace
 
 from cliff.command import Command
 
@@ -19,7 +19,7 @@ class Delete(Command):
         parser.add_argument('id')
         return parser
 
-    def take_action(self, parsed_args) -> None:
+    def take_action(self, parsed_args: Namespace) -> None:
         self.log.debug(f'Running {self.cmd_name}')
         self.app.puzzle_store_repository.delete_by_id(parsed_args.id)
         self.app.puzzle_sheet_repository.delete_by_id(parsed_args.id)
