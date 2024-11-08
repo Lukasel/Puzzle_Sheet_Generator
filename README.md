@@ -35,12 +35,23 @@ Possible configurations:
 - config: Change the programs configuration
 - config-default: Restore the default configuration
 - list: show all available sheets or stores
+  - `list sh` to show sheets
+  - `list st` to show stores
 - show: show a specific sheet or store
+  - `show <id_or_name>`
 - delete: delete a sheet or store
+  - `delete <id_or_name>`
 - Store specific commands:
   - filter: create a store of puzzles by filtering from the db or an existing store
+    - `filter <from_store> <new_store_name>` with options:
+      - `-t <theme_1> <additional_theme>*`: themes have to spelled as in the lichess puzzle database. If multiple themes are supplied, a puzzle has to match all of them.
+      - `-r (<mean_rating> | <min_rating> <max_rating>)`: mean_rating results in `min_rating = mean_rating - 100` and `max_rating = mean_rating + 100`
+      - `-m (<exact_number_of_moves> | <min_moves> <max_moves>)`
+      - `-o <opening_tag>`: currently not working properly
   - sample: create a new sheet or add to a sheet by sampling a given number of puzzles from a store
+    - `sample <from_store> <into_sheet> [-a <amount of puzzles>]`
   - union: unite two puzzle stores to create a mixed set of puzzles
+    - `union <store_1> <store_2> <name_of_new_store>`
 - Sheet specific commands:
   - add-to: manually add a new element to a sheet in form of a FEN or SVG
   - copy: Create a new sheet with the same elements
