@@ -73,11 +73,8 @@ class Show(Lister):
         'FEN',
         'Moves',
         'Rating',
-        'RatingDeviation',
-        'Popularity',
         'NbPlays',
-        'Themes',
-        'OpeningTags'
+        'Themes'
     )
 
     def get_parser(self, prog_name) -> ArgumentParser:
@@ -91,10 +88,10 @@ class Show(Lister):
         sheet_id = self.app.puzzle_sheet_repository.get_id_for_name(parsed_args.name)
         if store_id is not None:
             store = self.app.puzzle_store_repository.get_by_id(store_id)
-            self.show_store(store, store_id)
+            return self.show_store(store, store_id)
         elif sheet_id is not None:
             sheet = self.app.puzzle_sheet_repository.get_by_id(sheet_id)
-            self.show_sheet(sheet, sheet_id)
+            return self.show_sheet(sheet, sheet_id)
         else:
             self.log.error('The given name is unknown.')
         return (), ()
@@ -124,13 +121,10 @@ class Show(Lister):
                     sheet_element.get_fen(),
                     sheet_element.get_number_of_moves(),
                     sheet_element.rating,
-                    sheet_element.rating_deviation,
-                    sheet_element.popularity,
                     sheet_element.nb_plays,
-                    sheet_element.themes,
-                    sheet_element.opening_tags
+                    sheet_element.themes
                 )
             case PositionByFEN():
-                return '', sheet_element.get_fen(), '', '', '', '', '', '', ''
+                return '', sheet_element.get_fen(), '', '', '', ''
             case _:
                 raise Exception('Unexpected type of puzzle sheet element.')

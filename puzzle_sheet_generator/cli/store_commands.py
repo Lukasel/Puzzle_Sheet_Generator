@@ -249,7 +249,8 @@ class Sample(Command):
 
     def _validate_args(self, parsed_args: Namespace, store: PuzzleStore | None, sheet: PuzzleSheet | None) -> bool:
         if store is None:
-            self.log.error(f'There is no store with name "{parsed_args.store_1}".')
+            self.log.error(f'There is no store with name "{parsed_args.store}".')
+            return False
         if parsed_args.amount <= 0:
             self.log.error('The selected amount of puzzles has to be positive.')
             return False

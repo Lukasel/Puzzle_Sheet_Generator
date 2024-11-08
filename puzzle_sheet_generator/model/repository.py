@@ -33,19 +33,13 @@ class Repository(Generic[T]):
     def get_id_for_name(self, name: str) -> str | None:
         if name in self.items:
             return name
-        for item in self.items.values():
-            if item.get_name() == name:
-                return item
+        for element_id, element in self.items.items():
+            if element.get_name() == name:
+                return element_idbug
         return None
 
     def get_by_id(self, element_id: str) -> T | None:
         return self.items.get(element_id)
-
-    def get_by_name(self, name: str) -> T | None:
-        for item in self.items.values():
-            if item.get_name() == name:
-                return item
-        return None
 
     def delete_by_id(self, element_id) -> None:
         del self.items[element_id]
