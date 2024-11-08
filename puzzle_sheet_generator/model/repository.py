@@ -35,7 +35,7 @@ class Repository(Generic[T]):
             return name
         for element_id, element in self.items.items():
             if element.get_name() == name:
-                return element_idbug
+                return element_id
         return None
 
     def get_by_id(self, element_id: str) -> T | None:
