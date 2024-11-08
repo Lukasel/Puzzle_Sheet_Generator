@@ -34,7 +34,7 @@ class Repository(Generic[T]):
         if name in self.items:
             return name
         for item in self.items.values():
-            if item.name == name:
+            if item.get_name() == name:
                 return item
         return None
 
@@ -43,7 +43,7 @@ class Repository(Generic[T]):
 
     def get_by_name(self, name: str) -> T | None:
         for item in self.items.values():
-            if item.name == name:
+            if item.get_name() == name:
                 return item
         return None
 

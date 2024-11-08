@@ -3,24 +3,12 @@ from numbers import Number
 from typing import Self
 
 import pandas
+from model.sheet_element import LichessPuzzle
 
 from puzzle_sheet_generator.puzzle_database import lichess_puzzle_themes
 
 
 class PuzzleStore:
-    column_names = (
-        'PuzzleId',
-        'FEN',
-        'Moves',
-        'Rating',
-        'RatingDeviation',
-        'Popularity',
-        'NbPlays',
-        'Themes',
-        'GameUrl',
-        'OpeningTags'
-    )
-
     def __init__(
             self,
             puzzle_df: pandas.DataFrame,
@@ -49,6 +37,9 @@ class PuzzleStore:
             combined_opening_tags
         )
 
+    def get_name(self) -> str:
+        return self.name
+
     def get_themes(self) -> set[str]:
         return self._themes
 
@@ -63,6 +54,12 @@ class PuzzleStore:
 
     def get_median_rating(self) -> Number:
         return self.puzzle_df['Rating'].median()
+
+    def sample(self, amount: int) -> list[LichessPuzzle]:
+        puzzle_sample = []
+        for puzzle in self.puzzle_df.sample(amount).itertuples(index=False):
+            puzzle_sample.append(LichessPuzzle(puzzle))
+        return puzzle_sample
 
     @staticmethod
     def filter_by_rating(puzzles_df: pandas.DataFrame, min_rating: int, max_rating: int) -> pandas.DataFrame:

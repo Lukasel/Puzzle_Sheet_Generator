@@ -2,6 +2,7 @@ import logging
 from argparse import ArgumentParser, Namespace
 
 from cliff.command import Command
+from model.puzzle_sheet import PuzzleSheet
 from model.puzzle_store import PuzzleStore
 from model.repository import PuzzleStoreRepository
 from pandas import DataFrame
@@ -219,9 +220,53 @@ class Sample(Command):
         self.app = app
         self.log = logging.getLogger(__name__)
 
+    def get_parser(self, prog_name: str) -> ArgumentParser:
+        parser = super().get_parser(prog_name)
+        parser.add_argument('store', help='Name of the puzzle store to sample from')
+        parser.add_argument('sheet', help='Name of the (possibly new) puzzle sheet to select puzzles for')
+        parser.add_argument(
+            '-a', '--amount', type=int,
+            default=PuzzleSheet.MAX_AMOUNT_OF_PUZZLES,
+            help='Number of puzzles to sample'
+        )
+        return parser
+
     def take_action(self, parsed_args: Namespace) -> None:
         self.log.debug(f'Running {self.cmd_name} with arguments {parsed_args}')
-        # todo
+        store = self.app.puzzle_store_repository.get(parsed_args.store)
+        sheet = self.app.puzzle_sheet_repository.get(parsed_args.sheet)
+        if self._validate_args(parsed_args, store, sheet):
+            puzzles = store.sample(parsed_args.amount)
+            if sheet is None:
+                sheet = PuzzleSheet(parsed_args.sheet, puzzles)
+                sheet_id = self.app.puzzle_sheet_repository.add(sheet)
+                self.log.info(f'Created new sheet "{sheet.get_name()}" with id "{sheet_id}" '
+                              f'that contains {len(sheet)} puzzles from store {store.get_name()}.')
+            else:
+                sheet_id = self.app.puzzle_sheet_repository.get_id_for_name(parsed_args.sheet)
+                sheet.add(puzzles)
+                self.log.info(f'Added {parsed_args.amount} puzzles to sheet "{sheet.get_name()}" with id "{sheet_id}".')
+
+    def _validate_args(self, parsed_args: Namespace, store: PuzzleStore | None, sheet: PuzzleSheet | None) -> bool:
+        if store is None:
+            self.log.error(f'There is no store with name "{parsed_args.store_1}".')
+        if parsed_args.amount <= 0:
+            self.log.error('The selected amount of puzzles has to be positive.')
+            return False
+        max_amount = PuzzleSheet.MAX_AMOUNT_OF_PUZZLES \
+            if sheet is None \
+            else PuzzleSheet.MAX_AMOUNT_OF_PUZZLES - len(sheet)
+        if max_amount == 0:
+            self.log.error(f'There is no free space on puzzle sheet "{sheet.get_name()}".')
+            return False
+        if parsed_args.amount > max_amount:
+            self.log.warning(f'The selected amount of {parsed_args.amount} puzzles, '
+                             f'exceeds the free space on this sheet. Only {max_amount} puzzles are sampled.')
+            parsed_args.amount = max_amount
+        if parsed_args.amount > len(store):
+            self.log.error(f'The selected puzzle store {store.get_name()} contains only {len(store)} puzzles.')
+        return True
+
 
 class Union(Command):
     """Unite two puzzle stores to create a mixed set of puzzles"""
