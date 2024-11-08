@@ -9,6 +9,8 @@ from puzzle_sheet_generator.puzzle_database import lichess_puzzle_themes
 
 
 class PuzzleStore:
+    max_themes_for_display = 4
+
     def __init__(
             self,
             puzzle_df: pandas.DataFrame,
@@ -27,9 +29,7 @@ class PuzzleStore:
     def combine(self, other_store: Self, name: str) -> Self:
         """Create a new puzzle store, that combines this and the other puzzle stores puzzles into one store."""
         combined_df = self.puzzle_df.combine_first(other_store.puzzle_df)
-        combined_opening_tags = {'mixed'} \
-                if 'mixed' in self._opening_tags or 'mixed' in other_store.opening_tags \
-                else self._opening_tags.union(other_store.opening_tags)
+        combined_opening_tags = self.combine_tags(self._opening_tags, other_store.opening_tags)
         return PuzzleStore(
             combined_df,
             name,
@@ -42,6 +42,9 @@ class PuzzleStore:
 
     def get_themes(self) -> set[str]:
         return self._themes
+
+    def get_filtered_themes(self) -> set[str]:
+        return self._themes if self.max_themes_for_display >= len(self._themes) > 0 else {'mixed'}
 
     def get_openings(self) -> set[str]:
         return self._opening_tags
@@ -109,3 +112,9 @@ class PuzzleStore:
                 regex += r'|'
             regex += r'\b' + tag + r'\b'
         return regex
+
+    @staticmethod
+    def combine_tags(own_tags: set[str], other_tags: set[str]) -> set[str]:
+        return {'mixed'} \
+            if 'mixed' in own_tags or 'mixed' in other_tags \
+            else own_tags.union(other_tags)

@@ -11,6 +11,9 @@ PuzzleTuple = namedtuple('PuzzleTuple', ' '.join(lichess_puzzle_db_column_names)
 
 
 class SheetElement(ABC):
+    def get_fen(self) -> str:
+        return ''
+
     @abstractmethod
     def get_side_to_move(self) -> bool:
         pass
@@ -25,6 +28,9 @@ class PositionByFEN(SheetElement):
         super().__init__()
         self.board = chess.Board(fen)
 
+    def get_fen(self) -> str:
+        return self.board.fen()
+
     def get_side_to_move(self) -> bool:
         return self.board.turn
 
@@ -37,7 +43,7 @@ class LichessPuzzle(SheetElement):
         super().__init__()
         self.puzzleId = puzzle_tuple.PuzzleId
         self.board = chess.Board(puzzle_tuple.FEN)
-        self.moves = puzzle_tuple.Moves
+        self.moves : str = puzzle_tuple.Moves
         self.rating = puzzle_tuple.Rating
         self.rating_deviation = puzzle_tuple.RatingDeviation
         self.popularity = puzzle_tuple.Popularity
@@ -45,6 +51,12 @@ class LichessPuzzle(SheetElement):
         self.themes = puzzle_tuple.Themes
         self.game_url = puzzle_tuple.GameUrl
         self.opening_tags = puzzle_tuple.OpeningTags
+
+    def get_fen(self) -> str:
+        return self.board.fen()
+
+    def get_number_of_moves(self) -> int:
+        return (self.moves.count(' ') + 1) // 2
 
     def get_side_to_move(self) -> bool:
         return self.board.turn

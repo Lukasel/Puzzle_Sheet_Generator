@@ -2,41 +2,63 @@ import logging
 from argparse import ArgumentParser, Namespace
 
 from cliff.lister import Lister
+from model.sheet_element import LichessPuzzle, PositionByFEN, SheetElement
 
 from puzzle_sheet_generator.model.puzzle_sheet import PuzzleSheet
 from puzzle_sheet_generator.model.puzzle_store import PuzzleStore
 from puzzle_sheet_generator.psg_cliff import PSGApp
 
-# todo load column names dynamically from translation service
-puzzle_store_columns = ("id", "nb puzzles", "themes", "openings", "min_rating", "max_rating")
+puzzle_store_columns = ('StoreId', 'Name', 'nb puzzles', 'Themes', 'Openings', 'min_rating', 'max_rating')
+puzzle_sheet_columns = ('SheetId', 'Name', 'nb puzzles')
 
 class List(Lister):
     """List all available stores or sheets"""
+    sheets_type_args = ('sh', 'sheet', 'sheets')
+    store_type_args = ('st', 'store', 'stores')
 
     def __init__(self, app: PSGApp, app_args):
         super().__init__(app, app_args, 'list')
         self.log = logging.getLogger(__name__)
         self.app = app
-        # todo load column names dynamically from translation service
-        self.puzzle_sheet_columns = ('SheetId', 'Name', 'Header', 'nb puzzles')
 
     def get_parser(self, prog_name) -> ArgumentParser:
         parser = super().get_parser(prog_name)
-        parser.add_argument('type', choices=['sh', 'sheets', 'st', 'stores'])
+        parser.add_argument('type', choices=[*self.sheets_type_args, *self.store_type_args])
         return parser
 
-    def take_action(self, parsed_args: Namespace) -> tuple:
+    def take_action(self, parsed_args: Namespace) -> tuple[tuple, tuple]:
         self.log.debug(f'Running {self.cmd_name}')
-        # todo
-        return ()
+        if parsed_args.type in self.sheets_type_args:
+            return self.show_sheets()
+        if parsed_args.type in self.store_type_args:
+            return self.show_stores()
+        raise Exception(f'Unknown type {parsed_args.type} for {self.cmd_name} command.')
 
-    def show_sheets(self):
-        # todo
-        pass
+    def show_sheets(self) -> tuple[tuple, tuple]:
+        data = (
+            (
+                sheet_id,
+                sheet.get_name(),
+                len(sheet)
+            )
+            for sheet_id, sheet in self.app.puzzle_sheet_repository.items.items()
+        )
+        return puzzle_sheet_columns, tuple(data)
 
-    def show_stores(self):
-        # todo
-        pass
+    def show_stores(self) -> tuple[tuple, tuple]:
+        data = (
+            (
+                store_id,
+                store.get_name(),
+                len(store),
+                store.get_filtered_themes(),
+                store.get_openings(),
+                store.get_min_rating(),
+                store.get_max_rating()
+            )
+            for store_id, store in self.app.puzzle_store_repository.items.items()
+        )
+        return puzzle_store_columns, tuple(data)
 
 
 class Show(Lister):
@@ -46,8 +68,7 @@ class Show(Lister):
         super().__init__(app, app_args, 'show')
         self.log = logging.getLogger(__name__)
         self.app = app
-        # todo load column names dynamically from translation service
-        self.puzzle_sheet_columns = (
+        self.sheet_element_columns = (
         'PuzzleId',
         'FEN',
         'Moves',
@@ -56,7 +77,6 @@ class Show(Lister):
         'Popularity',
         'NbPlays',
         'Themes',
-        'GameUrl',
         'OpeningTags'
     )
 
@@ -65,7 +85,7 @@ class Show(Lister):
         parser.add_argument('name')
         return parser
 
-    def take_action(self, parsed_args: Namespace) -> tuple:
+    def take_action(self, parsed_args: Namespace) -> tuple[tuple, tuple]:
         self.log.debug(f'Running {self.cmd_name} for name {parsed_args.name}')
         store_id = self.app.puzzle_store_repository.get_id_for_name(parsed_args.name)
         sheet_id = self.app.puzzle_sheet_repository.get_id_for_name(parsed_args.name)
@@ -76,23 +96,41 @@ class Show(Lister):
             sheet = self.app.puzzle_sheet_repository.get_by_id(sheet_id)
             self.show_sheet(sheet, sheet_id)
         else:
-            # todo Use translation service
             self.log.error('The given name is unknown.')
-        return ()
+        return (), ()
 
-    def show_store(self, store: PuzzleStore, store_id: str) -> tuple:
+    def show_store(self, store: PuzzleStore, store_id: str) -> tuple[tuple, tuple]:
         store_data = (
             store_id,
             store.__len__(),
-            store.get_themes(),
+            store.get_filtered_themes(),
             store.get_openings(),
             store.get_min_rating(),
             store.get_max_rating()
         )
         return puzzle_store_columns, (store_data,)
 
-    def show_sheet(self, sheet: PuzzleSheet, sheet_id: str) -> tuple:
+    def show_sheet(self, sheet: PuzzleSheet, sheet_id: str) -> tuple[tuple, tuple]:
         self.log.info(f"Puzzle Sheet {sheet_id}:")
-        # todo
-        data = ()
-        return self.puzzle_sheet_columns, data
+        data = (self.show_sheet_element(element) for element in sheet.elements)
+        return self.sheet_element_columns, tuple(data)
+
+    def show_sheet_element(self, sheet_element: SheetElement) -> tuple:
+        match sheet_element:
+            case LichessPuzzle():
+                sheet_element: LichessPuzzle
+                return (
+                    sheet_element.puzzleId,
+                    sheet_element.get_fen(),
+                    sheet_element.get_number_of_moves(),
+                    sheet_element.rating,
+                    sheet_element.rating_deviation,
+                    sheet_element.popularity,
+                    sheet_element.nb_plays,
+                    sheet_element.themes,
+                    sheet_element.opening_tags
+                )
+            case PositionByFEN():
+                return '', sheet_element.get_fen(), '', '', '', '', '', '', ''
+            case _:
+                raise Exception('Unexpected type of puzzle sheet element.')

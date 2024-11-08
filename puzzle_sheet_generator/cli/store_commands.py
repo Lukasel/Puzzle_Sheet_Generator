@@ -209,7 +209,7 @@ class Filter(Command):
         if filter_args.filter_by_themes is False:
             return filter_args.store.get_themes()
         else:
-            return filter_args.store.get_themes().intersection(filter_args.themes)
+            return filter_args.store.get_themes().intersection(set(filter_args.themes))
 
 
 class Sample(Command):
