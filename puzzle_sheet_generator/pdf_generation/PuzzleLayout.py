@@ -9,8 +9,6 @@ from reportlab.lib.units import cm
 from reportlab.pdfgen import canvas
 from svglib import svglib
 
-__all__ = ('PageSettings', 'svg_to_rgl')
-
 
 class PageSettings:
     def __init__(self):

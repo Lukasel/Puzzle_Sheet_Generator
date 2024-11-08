@@ -53,10 +53,12 @@ class AppConfig:
     def set_diagram_board_colors_from_file(self, board_colors_path: str | PathLike) -> None:
         if self.set(self.DIAGRAM_BOARD_COLORS_PATH_KEY, board_colors_path):
             self._set_diagram_board_colors()
+        else:
+            logging.warning(f'Could not load diagram board colors from "{board_colors_path}".')
 
     def _set_diagram_board_colors(self) -> None:
         try:
-            with self.config[self.DIAGRAM_BOARD_COLORS_PATH_KEY].open('r') as file:
+            with Path(self.config[self.DIAGRAM_BOARD_COLORS_PATH_KEY]).open('r') as file:
                 self.diagram_board_colors = json.load(file)
         except OSError as error:
             self.log.error(f'Could not load diagram board colors '
@@ -89,6 +91,7 @@ class AppConfig:
         self.log.debug(f'trying to load config form {config_path}')
         if config_path.exists() and config_path.is_file():
             self._load_configuration_from(config_path)
+            self._set_diagram_board_colors()
         else:
             self.log.info('no configuration found, setting default values')
             self.set_default_configuration_including_lichess_db()

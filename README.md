@@ -62,6 +62,10 @@ Possible configurations:
   - load: load a saved sheet or a directory of saved sheets
   - save: save a sheet, so it can be reused across multiple sessions
 - print: create a PDF file from a sheet
+  - `print <sheet> <path/to/file.pdf>` with options:
+    - `-l (6 | 12)` explicitly choose a layout with 6 or 12 puzzles on one page
+    - `--left-header` set the text printed in the left header
+    - `--right-header` set the text printed in the right header
 
 ## Development Setup
 

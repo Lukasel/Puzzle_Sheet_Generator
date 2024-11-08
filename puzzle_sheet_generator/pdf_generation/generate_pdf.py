@@ -6,25 +6,34 @@ from reportlab.pdfgen import canvas
 
 from puzzle_sheet_generator.pdf_generation.Layout6Puzzles import Layout6Puzzles
 from puzzle_sheet_generator.pdf_generation.Layout12Puzzles import Layout12Puzzles
-from puzzle_sheet_generator.pdf_generation.PuzzleLayout import PageSettings
+from puzzle_sheet_generator.pdf_generation.PuzzleLayout import PageSettings, PuzzleLayout
 
 __all__ = ('make_pdf_puzzle_page',)
 
-def make_pdf_puzzle_page(outfile: str | Path, svgs: list[tuple[str, bool]], theme: str, name: str) -> None:
+def make_pdf_puzzle_page(
+        outfile: str | Path,
+        svgs: list[tuple[str, bool]],
+        theme: str,
+        name: str,
+        layout: PuzzleLayout | None = None
+) -> None:
     """
     Create a PDF file with up to 12 chess puzzles
     :param outfile: path to output
     :param svgs: list of tuples with SVG and side to move
     :param theme: general puzzle theme, printed left side in header
     :param name: more specific theme or name of the sheet or the author, printed right side in header
+    :param layout: a layout for the puzzles on the page
     """
     page_settings = PageSettings()
-    if len(svgs) <= Layout6Puzzles.MAXIMUM_PUZZLES_IN_LAYOUT:
+    puzzle_layout = layout
+    if puzzle_layout is None:
+        puzzle_layout = Layout6Puzzles(page_settings) \
+            if len(svgs) <= Layout6Puzzles.MAXIMUM_PUZZLES_IN_LAYOUT \
+            else Layout12Puzzles(page_settings)
+    if type(layout) is Layout6Puzzles:
         page_settings.margin_left = 2 * cm
         page_settings.margin_right = 2 * cm
-    puzzle_layout = Layout6Puzzles(page_settings) \
-                    if len(svgs) <= Layout6Puzzles.MAXIMUM_PUZZLES_IN_LAYOUT \
-                    else Layout12Puzzles(page_settings)
 
     page_canvas = canvas.Canvas(
         str(outfile),
