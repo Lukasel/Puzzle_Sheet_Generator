@@ -42,8 +42,15 @@ class LichessPuzzle(SheetElement):
     def __init__(self, puzzle_tuple: PuzzleTuple):
         super().__init__()
         self.puzzleId = puzzle_tuple.PuzzleId
+
         self.board = chess.Board(puzzle_tuple.FEN)
         self.moves : str = puzzle_tuple.Moves
+
+        # apply the first move, because the lichess puzzle db gives the FEN of the position before the puzzle
+        first_move_uci_str = self.moves.split(' ')[0]
+        first_move = chess.Move.from_uci(first_move_uci_str)
+        self.board.push(first_move)
+
         self.rating = puzzle_tuple.Rating
         self.rating_deviation = puzzle_tuple.RatingDeviation
         self.popularity = puzzle_tuple.Popularity
