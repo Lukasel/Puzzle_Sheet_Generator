@@ -16,7 +16,13 @@ class Print(Command):
 
     def get_parser(self, prog_name) -> ArgumentParser:
         parser = super().get_parser(prog_name)
-        parser.add_argument('sheet')
+        parser.add_argument('sheet', help = 'Name or ID of the puzzle sheet to print.')
+        parser.add_argument(
+            'layout',
+            choices = ('6', '12'),
+            help = 'The layout of the generated PDF. '
+                   'Either "6" or "12" for layouts with the respective number of puzzles on one page.'
+        )
         return parser
 
     def take_action(self, parsed_args: Namespace) -> None:

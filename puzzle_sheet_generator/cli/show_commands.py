@@ -23,7 +23,11 @@ class List(Lister):
 
     def get_parser(self, prog_name) -> ArgumentParser:
         parser = super().get_parser(prog_name)
-        parser.add_argument('type', choices=[*self.sheets_type_args, *self.store_type_args])
+        parser.add_argument(
+            'type',
+            choices = (*self.sheets_type_args, *self.store_type_args),
+            help = 'Either "sh" for listing puzzle sheets or "st" for listing puzzle stores.'
+        )
         return parser
 
     def take_action(self, parsed_args: Namespace) -> tuple[tuple, tuple]:
@@ -79,7 +83,7 @@ class Show(Lister):
 
     def get_parser(self, prog_name) -> ArgumentParser:
         parser = super().get_parser(prog_name)
-        parser.add_argument('name')
+        parser.add_argument('name', help = 'Name or ID of the puzzle sheet or store to show.')
         return parser
 
     def take_action(self, parsed_args: Namespace) -> tuple[tuple, tuple]:

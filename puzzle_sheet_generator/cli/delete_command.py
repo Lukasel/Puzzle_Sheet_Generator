@@ -16,7 +16,7 @@ class Delete(Command):
 
     def get_parser(self, prog_name) -> ArgumentParser:
         parser = super().get_parser(prog_name)
-        parser.add_argument('id')
+        parser.add_argument('name', help = 'Name or ID of the puzzle sheet or store to delete.')
         return parser
 
     def take_action(self, parsed_args: Namespace) -> None:
