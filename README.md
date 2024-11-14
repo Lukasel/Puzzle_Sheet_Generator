@@ -53,12 +53,17 @@ Possible configurations:
   - union: unite two puzzle stores to create a mixed set of puzzles
     - `union <store_1> <store_2> <name_of_new_store>`
 - Sheet specific commands:
-  - add-to: manually add a new element to a sheet in form of a FEN or SVG
+  - add-to: manually add a new element to a sheet in form of a lichess puzzle (provide puzzle id) or FEN
+    - `add-to <sheet> <puzzle>`
   - copy: Create a new sheet with the same elements
+    - `copy <sheet> <new_sheet_name>`
   - remove: remove an element from a sheet
+    - `remove <sheet> <puzzle>` with `<puzzle>` being either a lichess puzzle id or the index in the puzzle sheet
   - reorder: reorder elements in a sheet
+    - `reorder <sheet> <index1> <index2>`
   - name: Change the name of a sheet or store
   - header: Specify what will be printed in the header above the puzzles
+    - `header -l <left-header> -r <right-header>`
   - load: load a saved sheet or a directory of saved sheets
   - save: save a sheet, so it can be reused across multiple sessions
 - print: create a PDF file from a sheet

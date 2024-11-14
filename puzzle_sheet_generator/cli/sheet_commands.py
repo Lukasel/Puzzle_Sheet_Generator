@@ -3,6 +3,7 @@ import copy
 import logging
 import re
 from argparse import ArgumentParser, Namespace
+from logging import Logger
 
 import chess
 from cliff.command import Command
@@ -115,7 +116,7 @@ class Remove(Command):
         self.log.debug(f'Running {self.cmd_name} with arguments {parsed_args}')
         sheet = self.app.puzzle_sheet_repository.get(parsed_args.sheet)
         if self._validate_args(parsed_args, sheet):
-            index = self.parse_index(parsed_args, sheet)
+            index = parse_index(parsed_args.puzzle, sheet, self.log)
             if index is not None:
                 sheet.remove_by_index(index)
                 self.log.info(f'The element at index {index} was removed from sheet "{sheet.get_name()}".')
@@ -125,16 +126,6 @@ class Remove(Command):
             self.log.error(f'There is no sheet with name "{parsed_args.sheet}".')
             return False
         return True
-
-    def parse_index(self, parsed_args: Namespace, sheet: PuzzleSheet) -> int | None:
-        index = sheet.find_index_by_puzzle_id(parsed_args.puzzle)
-        if index is None:
-            with contextlib.suppress(Exception):
-                index = int(parsed_args.puzzle)
-                if index < 0 or index >= len(sheet):
-                    self.log.error(f'"{parsed_args.puzzle}" is neither a Lichess puzzle id '
-                                   f'nor a valid index in the sheet "{sheet.name}".')
-        return index
 
 class Reorder(Command):
     """Reorder elements in a specific sheet. Swaps the positions of two elements."""
@@ -147,16 +138,17 @@ class Reorder(Command):
     def get_parser(self, prog_name) -> ArgumentParser:
         parser = super().get_parser(prog_name)
         parser.add_argument('sheet', help = 'Name or ID of the puzzle sheet.')
-        parser.add_argument('order', nargs=2, type=int, help = 'The indices of the elements to swap.')
+        parser.add_argument('order', nargs=2, type=int, help = 'The puzzle_ids or indices of the elements to swap.')
         return parser
 
     def take_action(self, parsed_args: Namespace) -> None:
         self.log.debug(f'Running {self.cmd_name} with arguments {parsed_args}')
         sheet = self.app.puzzle_sheet_repository.get(parsed_args.sheet)
         if self._validate_args(parsed_args, sheet):
-            sheet[parsed_args.order[0]], sheet[parsed_args.order[1]] = (sheet[parsed_args.order[1]],
-                                                                        sheet[parsed_args.order[0]])
-            self.log.info(f'The elements at the indices {parsed_args.order[0]} and {parsed_args.order[1]} '
+            index_1 = parse_index(parsed_args.order[0], sheet, self.log)
+            index_2 = parse_index(parsed_args.order[1], sheet, self.log)
+            sheet[index_1], sheet[index_2] = sheet[index_2], sheet[index_1]
+            self.log.info(f'The elements at the indices {index_1} and {index_2} '
                           f'in sheet "{sheet.get_name()}" have been swapped.')
 
     def _validate_args(self, parsed_args: Namespace, sheet: PuzzleSheet | None) -> bool:
@@ -235,3 +227,13 @@ class Load(Command):
     def take_action(self, parsed_args: Namespace) -> None:
         self.log.debug(f'Running {self.cmd_name} with arguments {parsed_args}')
         # todo
+
+def parse_index(value: str, sheet: PuzzleSheet, log: Logger) -> int | None:
+    index = sheet.find_index_by_puzzle_id(value)
+    if index is None:
+        with contextlib.suppress(Exception):
+            index = int(value)
+            if index < 0 or index >= len(sheet):
+                log.error(f'"{value}" is neither a Lichess puzzle id '
+                               f'nor a valid index in the sheet "{sheet.name}".')
+    return index
