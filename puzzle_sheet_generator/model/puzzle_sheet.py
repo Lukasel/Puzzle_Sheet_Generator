@@ -5,7 +5,6 @@ from puzzle_sheet_generator.model.sheet_element import LichessPuzzle, SheetEleme
 
 SvgWithSideToMove = namedtuple('SvgWithSideToMove', 'svg side_to_move')
 
-
 class PuzzleSheet:
     MAX_AMOUNT_OF_PUZZLES = 12
 
@@ -20,6 +19,9 @@ class PuzzleSheet:
         self.name = name
         self.left_header = left_header
         self.right_header = right_header
+
+    def __len__(self):
+        return len(self.elements)
 
     def get_name(self) -> str:
         return self.name
@@ -48,6 +50,3 @@ class PuzzleSheet:
 
     def remove_by_index(self, index: int) -> None:
         del self.elements[index]
-
-    def __len__(self):
-        return len(self.elements)

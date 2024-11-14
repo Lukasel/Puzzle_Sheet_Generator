@@ -3,8 +3,8 @@ from numbers import Number
 from typing import Self
 
 import pandas
-from model.sheet_element import LichessPuzzle
 
+from puzzle_sheet_generator.model.sheet_element import LichessPuzzle
 from puzzle_sheet_generator.puzzle_database import lichess_puzzle_themes
 
 

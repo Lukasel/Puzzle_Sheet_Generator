@@ -8,7 +8,7 @@ import puzzle_sheet_generator
 from puzzle_sheet_generator.model.app_config import AppConfig
 from puzzle_sheet_generator.model.repository import PuzzleSheetRepository, PuzzleStoreRepository
 from puzzle_sheet_generator.puzzle_database.lichess_puzzle_db import LichessPuzzleDB
-from puzzle_sheet_generator.service.translation_service import TranslationService
+from puzzle_sheet_generator.service.save_file_service import SaveFileService
 
 
 class PSGApp(App):
@@ -23,12 +23,12 @@ class PSGApp(App):
         self.config = AppConfig(self.app_name)
         self.puzzle_store_repository : PuzzleStoreRepository = None
         self.puzzle_sheet_repository : PuzzleSheetRepository = None
-        self.translation_service = None
+        self.save_file_service = SaveFileService(None)
 
     def initialize_app(self, argv) -> None:
-        self.translation_service = TranslationService()
         self.LOG.debug(f'initialising {self.app_name} app')
         lichess_puzzle_db = self.load_lichess_puzzle_db()
+        self.save_file_service.lichess_puzzle_database = lichess_puzzle_db
         self.puzzle_store_repository = PuzzleStoreRepository("st", lichess_puzzle_db)
         self.puzzle_sheet_repository = PuzzleSheetRepository("sh")
         self.LOG.info('The puzzle sheet generator app is ready.')

@@ -4,6 +4,7 @@ import logging
 import re
 from argparse import ArgumentParser, Namespace
 from logging import Logger
+from pathlib import Path
 
 import chess
 from cliff.command import Command
@@ -15,7 +16,7 @@ from puzzle_sheet_generator.psg_cliff import PSGApp
 
 class AddTo(Command):
     """Add an element to a specific sheet"""
-    puzzle_id_regex = re.compile(r'[A-Za-z0-9]{5,6}')
+    puzzle_id_regex = re.compile(r'^[A-Za-z0-9]{5,6}$')
 
     def __init__(self, app: PSGApp, app_args):
         super().__init__(app, app_args, 'add-to')
@@ -169,9 +170,28 @@ class Name(Command):
         self.app = app
         self.log = logging.getLogger(__name__)
 
+    def get_parser(self, prog_name) -> ArgumentParser:
+        parser = super().get_parser(prog_name)
+        parser.add_argument('sheet', help='Name or ID of the puzzle sheet.')
+        parser.add_argument('name', help='TNew name of the puzzle sheet.')
+        return parser
+
     def take_action(self, parsed_args: Namespace) -> None:
         self.log.debug(f'Running {self.cmd_name} with arguments {parsed_args}')
-        # todo
+        sheet_id = self.app.puzzle_sheet_repository.get_id_for_name(parsed_args.sheet)
+        sheet = self.app.puzzle_sheet_repository.get_by_id(sheet_id)
+        if self._validate_args(parsed_args, sheet):
+            sheet.name = parsed_args.name
+            self.log.info(f'Changed the name of the sheet with id "{sheet_id}" to "{sheet.get_name()}".')
+
+    def _validate_args(self, parsed_args: Namespace, sheet: PuzzleSheet | None) -> bool:
+        if sheet is None:
+            self.log.error(f'There is no sheet with name "{parsed_args.sheet}".')
+            return False
+        if self.app.puzzle_sheet_repository.get_id_for_name(parsed_args.name) is not None:
+            self.log.error(f'A puzzle sheet with the name or id "{parsed_args.name}" already exists.')
+            return False
+        return True
 
 class Header(Command):
     """Specify what will be printed in the header above the puzzles"""
@@ -212,9 +232,36 @@ class Save(Command):
         self.app = app
         self.log = logging.getLogger(__name__)
 
+    def get_parser(self, prog_name) -> ArgumentParser:
+        parser = super().get_parser(prog_name)
+        parser.add_argument('sheet', help='Name or ID of the puzzle sheet.')
+        parser.add_argument('path', nargs='?', default='', help='Optional: Path to save the puzzle sheet at.')
+        return parser
+
     def take_action(self, parsed_args: Namespace) -> None:
         self.log.debug(f'Running {self.cmd_name} with arguments {parsed_args}')
-        # todo
+        sheet_id = self.app.puzzle_sheet_repository.get_id_for_name(parsed_args.sheet)
+        sheet = self.app.puzzle_sheet_repository.get_by_id(sheet_id)
+        save_path = Path(parsed_args.path) if parsed_args.path != '' and not parsed_args.path.isspace() else None
+        if self._validate_args(parsed_args, sheet, save_path):
+            if save_path is None:
+                self.app.save_file_service.save_sheet(sheet, sheet_id, self.app.config)
+            else:
+                self.app.save_file_service.save_to_path(sheet, save_path)
+            self.log.info(f'Saved puzzle sheet "{sheet.get_name()}".')
+
+    def _validate_args(self, parsed_args: Namespace, sheet: PuzzleSheet, save_path: Path | None) -> bool:
+        if sheet is None:
+            self.log.error(f'There is no sheet with name "{parsed_args.sheet}".')
+            return False
+        if save_path is not None:
+            if save_path.is_dir():
+                self.log.error(f'The path "{parsed_args.path}" is a directory.')
+                return False
+            if save_path.exists():
+                self.log.error(f'The file "{parsed_args.path}" already exists and would be overwritten.')
+                return False
+        return True
 
 class Load(Command):
     """Load a saved sheet or a directory of saved sheets"""
@@ -224,9 +271,29 @@ class Load(Command):
         self.app = app
         self.log = logging.getLogger(__name__)
 
+    def get_parser(self, prog_name) -> ArgumentParser:
+        parser = super().get_parser(prog_name)
+        parser.add_argument('path', nargs='?', default='', help='Optional: Path to load puzzle sheets from.')
+        return parser
+
     def take_action(self, parsed_args: Namespace) -> None:
         self.log.debug(f'Running {self.cmd_name} with arguments {parsed_args}')
-        # todo
+        load_path = Path(parsed_args.path) if parsed_args.path != '' and not parsed_args.path.isspace() else None
+        if self._validate_args(parsed_args, load_path):
+            if load_path is None:
+                puzzle_sheets = self.app.save_file_service.load(self.app.config)
+            else:
+                puzzle_sheets = self.app.save_file_service.load_from_path(load_path)
+            sheet_ids = []
+            for sheet in puzzle_sheets:
+                sheet_ids.append(self.app.puzzle_sheet_repository.add(sheet))
+            self.log.info(f'Loaded puzzle sheets with the ids {sheet_ids}.')
+
+    def _validate_args(self, parsed_args: Namespace, load_path: Path | None) -> bool:
+        if load_path is not None and not load_path.exists():
+            self.log.error(f'The path "{parsed_args.path}" does not exist or is not readable.')
+            return False
+        return True
 
 def parse_index(value: str, sheet: PuzzleSheet, log: Logger) -> int | None:
     index = sheet.find_index_by_puzzle_id(value)
