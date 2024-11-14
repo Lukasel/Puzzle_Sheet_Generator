@@ -189,9 +189,28 @@ class Header(Command):
         self.app = app
         self.log = logging.getLogger(__name__)
 
+    def get_parser(self, prog_name) -> ArgumentParser:
+        parser = super().get_parser(prog_name)
+        parser.add_argument('sheet', help='Name or ID of the puzzle sheet.')
+        parser.add_argument('-l', '--left-header', help='Text in the top left header')
+        parser.add_argument('-r', '--right-header', help='Text in the top right header')
+        return parser
+
     def take_action(self, parsed_args: Namespace) -> None:
         self.log.debug(f'Running {self.cmd_name} with arguments {parsed_args}')
-        # todo
+        sheet = self.app.puzzle_sheet_repository.get(parsed_args.sheet)
+        if self._validate_args(parsed_args, sheet):
+            if parsed_args.left_header is not None:
+                sheet.left_header = parsed_args.left_header
+            if parsed_args.right_header is not None:
+                sheet.right_header = parsed_args.right_header
+            self.log.info(f'The header of sheet "{sheet.get_name()}" has been set.')
+
+    def _validate_args(self, parsed_args: Namespace, sheet: PuzzleSheet | None) -> bool:
+        if sheet is None:
+            self.log.error(f'There is no sheet with name "{parsed_args.sheet}".')
+            return False
+        return True
 
 class Save(Command):
     """Save a sheet, so it can be reused across multiple sessions"""
