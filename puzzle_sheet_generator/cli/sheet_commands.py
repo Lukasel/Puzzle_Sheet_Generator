@@ -15,7 +15,7 @@ class AddTo(Command):
         self.log = logging.getLogger(__name__)
 
     def take_action(self, parsed_args) -> None:
-        self.log.debug(f'Running {self.cmd_name}')
+        self.log.debug(f'Running {self.cmd_name} with arguments {parsed_args}')
         # todo
 
 class Copy(Command):
@@ -27,7 +27,7 @@ class Copy(Command):
         self.log = logging.getLogger(__name__)
 
     def take_action(self, parsed_args: Namespace) -> None:
-        self.log.debug(f'Running {self.cmd_name}')
+        self.log.debug(f'Running {self.cmd_name} with arguments {parsed_args}')
         # todo
 
 class Remove(Command):
@@ -39,7 +39,7 @@ class Remove(Command):
         self.log = logging.getLogger(__name__)
 
     def take_action(self, parsed_args: Namespace) -> None:
-        self.log.debug(f'Running {self.cmd_name}')
+        self.log.debug(f'Running {self.cmd_name} with arguments {parsed_args}')
         # todo
 
 class Reorder(Command):
@@ -51,7 +51,7 @@ class Reorder(Command):
         self.log = logging.getLogger(__name__)
 
     def take_action(self, parsed_args: Namespace) -> None:
-        self.log.debug(f'Running {self.cmd_name}')
+        self.log.debug(f'Running {self.cmd_name} with arguments {parsed_args}')
         # todo
 
 class Name(Command):
@@ -63,7 +63,7 @@ class Name(Command):
         self.log = logging.getLogger(__name__)
 
     def take_action(self, parsed_args: Namespace) -> None:
-        self.log.debug(f'Running {self.cmd_name}')
+        self.log.debug(f'Running {self.cmd_name} with arguments {parsed_args}')
         # todo
 
 class Header(Command):
@@ -75,7 +75,7 @@ class Header(Command):
         self.log = logging.getLogger(__name__)
 
     def take_action(self, parsed_args: Namespace) -> None:
-        self.log.debug(f'Running {self.cmd_name}')
+        self.log.debug(f'Running {self.cmd_name} with arguments {parsed_args}')
         # todo
 
 class Save(Command):
@@ -87,7 +87,7 @@ class Save(Command):
         self.log = logging.getLogger(__name__)
 
     def take_action(self, parsed_args: Namespace) -> None:
-        self.log.debug(f'Running {self.cmd_name}')
+        self.log.debug(f'Running {self.cmd_name} with arguments {parsed_args}')
         # todo
 
 class Load(Command):
@@ -99,5 +99,5 @@ class Load(Command):
         self.log = logging.getLogger(__name__)
 
     def take_action(self, parsed_args: Namespace) -> None:
-        self.log.debug(f'Running {self.cmd_name}')
+        self.log.debug(f'Running {self.cmd_name} with arguments {parsed_args}')
         # todo

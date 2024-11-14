@@ -20,6 +20,6 @@ class Delete(Command):
         return parser
 
     def take_action(self, parsed_args: Namespace) -> None:
-        self.log.debug(f'Running {self.cmd_name}')
+        self.log.debug(f'Running {self.cmd_name} with arguments {parsed_args}')
         self.app.puzzle_store_repository.delete_by_id(parsed_args.id)
         self.app.puzzle_sheet_repository.delete_by_id(parsed_args.id)

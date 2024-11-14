@@ -36,7 +36,7 @@ class Print(Command):
         return parser
 
     def take_action(self, parsed_args: Namespace) -> None:
-        self.log.debug(f'Running {self.cmd_name}')
+        self.log.debug(f'Running {self.cmd_name} with arguments {parsed_args}')
         sheet = self.app.puzzle_sheet_repository.get(parsed_args.sheet)
         out_path = Path(parsed_args.out_file)
         if self._validate_args(parsed_args, sheet, out_path):

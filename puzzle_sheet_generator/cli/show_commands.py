@@ -31,7 +31,7 @@ class List(Lister):
         return parser
 
     def take_action(self, parsed_args: Namespace) -> tuple[tuple, tuple]:
-        self.log.debug(f'Running {self.cmd_name}')
+        self.log.debug(f'Running {self.cmd_name} with arguments {parsed_args}')
         if parsed_args.type in self.sheets_type_args:
             return self.show_sheets()
         if parsed_args.type in self.store_type_args:
@@ -87,7 +87,7 @@ class Show(Lister):
         return parser
 
     def take_action(self, parsed_args: Namespace) -> tuple[tuple, tuple]:
-        self.log.debug(f'Running {self.cmd_name} for name {parsed_args.name}')
+        self.log.debug(f'Running {self.cmd_name} with arguments {parsed_args}')
         store_id = self.app.puzzle_store_repository.get_id_for_name(parsed_args.name)
         sheet_id = self.app.puzzle_sheet_repository.get_id_for_name(parsed_args.name)
         if store_id is not None:

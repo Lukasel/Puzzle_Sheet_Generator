@@ -22,7 +22,7 @@ class ChangeConfig(Command):
         return parser
 
     def take_action(self, parsed_args: Namespace) -> None:
-        self.log.debug(f'Running {self.cmd_name}')
+        self.log.debug(f'Running {self.cmd_name} with arguments {parsed_args}')
         if parsed_args.config_key == AppConfig.LICHESS_PUZZLE_DB_KEY \
                 and self.app.config.set(parsed_args.config_key, parsed_args.value):
             lichess_puzzle_db = self.app.load_lichess_puzzle_db()
