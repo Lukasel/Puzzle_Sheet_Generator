@@ -1,4 +1,5 @@
 import contextlib
+import copy
 import logging
 import re
 from argparse import ArgumentParser, Namespace
@@ -67,9 +68,32 @@ class Copy(Command):
         self.app = app
         self.log = logging.getLogger(__name__)
 
+    def get_parser(self, prog_name) -> ArgumentParser:
+        parser = super().get_parser(prog_name)
+        parser.add_argument('sheet', help = 'Name or ID of the puzzle sheet to copy.')
+        parser.add_argument('new-sheet', help = 'Name for the new sheet.')
+        return parser
+
     def take_action(self, parsed_args: Namespace) -> None:
         self.log.debug(f'Running {self.cmd_name} with arguments {parsed_args}')
-        # todo
+        sheet = self.app.puzzle_sheet_repository.get(parsed_args.sheet)
+        if self._validate_args(parsed_args, sheet):
+            new_sheet = PuzzleSheet(
+                parsed_args.new_sheet,
+                copy.copy(sheet.elements),
+                sheet.left_header,
+                sheet.right_header
+            )
+            self.app.puzzle_sheet_repository.add(new_sheet)
+
+    def _validate_args(self, parsed_args: Namespace, sheet: PuzzleSheet | None) -> bool:
+        if sheet is None:
+            self.log.error(f'There is no sheet with name "{parsed_args.sheet}".')
+            return False
+        if self.app.puzzle_sheet_repository.get_id_for_name(parsed_args.new_sheet) is not None:
+            self.log.error(f'A puzzle sheet with the name or id "{parsed_args.new_sheet}" already exists.')
+            return False
+        return True
 
 class Remove(Command):
     """Remove an element from a sheet"""
@@ -79,9 +103,35 @@ class Remove(Command):
         self.app = app
         self.log = logging.getLogger(__name__)
 
+    def get_parser(self, prog_name) -> ArgumentParser:
+        parser = super().get_parser(prog_name)
+        parser.add_argument('sheet', help = 'Name or ID of the puzzle sheet.')
+        parser.add_argument('puzzle', help = 'The Lichess puzzle id or the index of the element to remove.')
+        return parser
+
     def take_action(self, parsed_args: Namespace) -> None:
         self.log.debug(f'Running {self.cmd_name} with arguments {parsed_args}')
-        # todo
+        sheet = self.app.puzzle_sheet_repository.get(parsed_args.sheet)
+        if self._validate_args(parsed_args, sheet):
+            index = self.parse_index(parsed_args, sheet)
+            if index is not None:
+                sheet.remove_by_index(index)
+
+    def _validate_args(self, parsed_args: Namespace, sheet: PuzzleSheet | None) -> bool:
+        if sheet is None:
+            self.log.error(f'There is no sheet with name "{parsed_args.sheet}".')
+            return False
+        return True
+
+    def parse_index(self, parsed_args: Namespace, sheet: PuzzleSheet) -> int | None:
+        index = sheet.find_index_by_puzzle_id(parsed_args.puzzle)
+        if index is None:
+            with contextlib.suppress(Exception):
+                index = int(parsed_args.puzzle)
+                if index < 0 or index >= len(sheet):
+                    self.log.error(f'"{parsed_args.puzzle}" is neither a Lichess puzzle id '
+                                   f'nor a valid index in the sheet "{sheet.name}"')
+        return index
 
 class Reorder(Command):
     """Reorder elements in a specific sheet"""

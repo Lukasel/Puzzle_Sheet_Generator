@@ -1,7 +1,7 @@
 from collections import namedtuple
 
 from puzzle_sheet_generator.model.app_config import AppConfig
-from puzzle_sheet_generator.model.sheet_element import SheetElement
+from puzzle_sheet_generator.model.sheet_element import LichessPuzzle, SheetElement
 
 SvgWithSideToMove = namedtuple('SvgWithSideToMove', 'svg side_to_move')
 
@@ -34,6 +34,20 @@ class PuzzleSheet:
             raise Exception(f'Too many puzzles ({len(elements)}) added to puzzle sheet {self.name} '
                             f'that already contains ({len(self.elements)}) elements '
                             f'(maximum {self.MAX_AMOUNT_OF_PUZZLES}).')
+
+    def find_index_by_puzzle_id(self, puzzle_id: str) -> int | None:
+        for index, element in enumerate(self.elements):
+            match element:
+                case LichessPuzzle():
+                    element: LichessPuzzle
+                    if element.puzzleId == puzzle_id:
+                        return index
+                case _:
+                    continue
+        return None
+
+    def remove_by_index(self, index: int) -> None:
+        del self.elements[index]
 
     def __len__(self):
         return len(self.elements)
