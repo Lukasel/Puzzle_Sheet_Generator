@@ -58,6 +58,13 @@ class PuzzleStore:
     def get_median_rating(self) -> Number:
         return self.puzzle_df['Rating'].median()
 
+    def get_puzzle_by_id(self, puzzle_id: str) -> LichessPuzzle | None:
+        puzzle_data = self.puzzle_df[self.puzzle_df['PuzzleId'] == puzzle_id]
+        if puzzle_data is not None and not puzzle_data.empty:
+            return LichessPuzzle(puzzle_data.item())
+        else:
+            return None
+
     def sample(self, amount: int) -> list[LichessPuzzle]:
         puzzle_sample = []
         for puzzle in self.puzzle_df.sample(amount).itertuples(index=False):

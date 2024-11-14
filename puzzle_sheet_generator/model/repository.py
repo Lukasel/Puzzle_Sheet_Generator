@@ -55,6 +55,9 @@ class PuzzleStoreRepository(Repository[PuzzleStore]):
             raise Exception("Can't delete the Lichess Puzzle Database.")
         del self.items[element_id]
 
+    def get_main_store(self) -> PuzzleStore:
+        return self.items[self.lichess_db_key]
+
     def reset_main_store(self, main_store: PuzzleStore) -> None:
         self.items[self.lichess_db_key] = main_store
 

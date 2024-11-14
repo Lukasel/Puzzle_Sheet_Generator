@@ -24,9 +24,9 @@ class SheetElement(ABC):
 
 
 class PositionByFEN(SheetElement):
-    def __init__(self, fen: str):
+    def __init__(self, board: chess.Board):
         super().__init__()
-        self.board = chess.Board(fen)
+        self.board = board
 
     def get_fen(self) -> str:
         return self.board.fen()
