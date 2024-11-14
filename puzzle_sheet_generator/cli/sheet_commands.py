@@ -42,6 +42,7 @@ class AddTo(Command):
                 sheet.add([lichess_puzzle])
             else:
                 sheet.add([PositionByFEN(board)])
+            self.log.info(f'The element was added to sheet "{sheet.get_name()}".')
 
     def _validate_args(
             self,
@@ -84,7 +85,8 @@ class Copy(Command):
                 sheet.left_header,
                 sheet.right_header
             )
-            self.app.puzzle_sheet_repository.add(new_sheet)
+            sheet_id = self.app.puzzle_sheet_repository.add(new_sheet)
+            self.log.info(f'The puzzle sheet "{sheet.get_name()}" was copied to a new sheet with id "{sheet_id}".')
 
     def _validate_args(self, parsed_args: Namespace, sheet: PuzzleSheet | None) -> bool:
         if sheet is None:
@@ -116,6 +118,7 @@ class Remove(Command):
             index = self.parse_index(parsed_args, sheet)
             if index is not None:
                 sheet.remove_by_index(index)
+                self.log.info(f'The element at index {index} was removed from sheet "{sheet.get_name()}".')
 
     def _validate_args(self, parsed_args: Namespace, sheet: PuzzleSheet | None) -> bool:
         if sheet is None:
@@ -130,20 +133,41 @@ class Remove(Command):
                 index = int(parsed_args.puzzle)
                 if index < 0 or index >= len(sheet):
                     self.log.error(f'"{parsed_args.puzzle}" is neither a Lichess puzzle id '
-                                   f'nor a valid index in the sheet "{sheet.name}"')
+                                   f'nor a valid index in the sheet "{sheet.name}".')
         return index
 
 class Reorder(Command):
-    """Reorder elements in a specific sheet"""
+    """Reorder elements in a specific sheet. Swaps the positions of two elements."""
 
     def __init__(self, app: PSGApp, app_args):
         super().__init__(app, app_args, 'reorder')
         self.app = app
         self.log = logging.getLogger(__name__)
 
+    def get_parser(self, prog_name) -> ArgumentParser:
+        parser = super().get_parser(prog_name)
+        parser.add_argument('sheet', help = 'Name or ID of the puzzle sheet.')
+        parser.add_argument('order', nargs=2, type=int, help = 'The indices of the elements to swap.')
+        return parser
+
     def take_action(self, parsed_args: Namespace) -> None:
         self.log.debug(f'Running {self.cmd_name} with arguments {parsed_args}')
-        # todo
+        sheet = self.app.puzzle_sheet_repository.get(parsed_args.sheet)
+        if self._validate_args(parsed_args, sheet):
+            sheet[parsed_args.order[0]], sheet[parsed_args.order[1]] = (sheet[parsed_args.order[1]],
+                                                                        sheet[parsed_args.order[0]])
+            self.log.info(f'The elements at the indices {parsed_args.order[0]} and {parsed_args.order[1]} '
+                          f'in sheet "{sheet.get_name()}" have been swapped.')
+
+    def _validate_args(self, parsed_args: Namespace, sheet: PuzzleSheet | None) -> bool:
+        if sheet is None:
+            self.log.error(f'There is no sheet with name "{parsed_args.sheet}".')
+            return False
+        for index in parsed_args.order:
+            if index < 0 or index >= len(sheet):
+                self.log.error(f'The sheet "{sheet.get_name()}" has only {len(sheet)} elements.')
+                return False
+        return True
 
 class Name(Command):
     """Change the name of a specific sheet"""
