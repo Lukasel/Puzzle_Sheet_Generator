@@ -38,6 +38,11 @@ class FilterArgs:
         self.themes = lichess_puzzle_themes.to_canonical_forms(parsed_args.themes) \
             if parsed_args.themes is not None \
             else set()
+        self.filter_excluded_themes = parsed_args.excluded_themes is not None
+        self.excluded_themes_from_user = parsed_args.excluded_themes
+        self.excluded_themes = lichess_puzzle_themes.to_canonical_forms(parsed_args.excluded_themes) \
+            if parsed_args.excluded_themes is not None \
+            else set()
 
         self.filter_by_opening_tags = parsed_args.openings is not None
         self.opening_tags = parsed_args.openings
@@ -74,6 +79,7 @@ class FilterArgs:
         valid = True
         valid &= self._validate_rating_args()
         valid &= self._validate_themes()
+        valid &= self._validate_excluded_themes()
         valid &= self._validate_opening_tags()
         valid &= self._validate_move_args()
         return valid
@@ -81,6 +87,7 @@ class FilterArgs:
     def _validate_at_least_one_filter_active(self) -> bool:
         if self.filter_by_rating is False \
                 and self.filter_by_themes is False \
+                and self.filter_excluded_themes is False \
                 and self.filter_by_opening_tags is False \
                 and self.filter_by_moves is False:
             self.log.error('No filter was selected.')
@@ -100,6 +107,18 @@ class FilterArgs:
             return True
         valid = True
         for theme in self.themes_from_user:
+            # todo also allow german puzzle theme names
+            if theme.casefold() not in lichess_puzzle_themes.casefold_puzzle_themes:
+                self.log.error(f'The puzzle theme "{theme}" is not a lichess puzzle database theme.')
+                # todo: suggest similar spelled themes
+                valid = False
+        return valid
+
+    def _validate_excluded_themes(self) -> bool:
+        if self.filter_excluded_themes is False:
+            return True
+        valid = True
+        for theme in self.excluded_themes_from_user:
             # todo also allow german puzzle theme names
             if theme.casefold() not in lichess_puzzle_themes.casefold_puzzle_themes:
                 self.log.error(f'The puzzle theme "{theme}" is not a lichess puzzle database theme.')
@@ -142,6 +161,7 @@ class Filter(Command):
         parser.add_argument('store', help='The puzzle store to filter puzzles from')
         parser.add_argument('name', help='Name for the new puzzle store')
         parser.add_argument('-t', '--themes', nargs='+', help='Filter by puzzle themes')
+        parser.add_argument('-e', '--excluded-themes', nargs='+', help='Exclude puzzle themes')
         parser.add_argument('-o', '--openings', nargs='+', help='Filter by opening tags')
         parser.add_argument('--min-moves', type=int, help='Filter for a minimum number of moves')
         parser.add_argument('--max-moves', type=int, help='Filter for a maximum number of moves')
@@ -192,6 +212,11 @@ class Filter(Command):
                 filtered_dataframe,
                 filter_args.themes
             )
+        if filter_args.filter_excluded_themes:
+            filtered_dataframe = PuzzleStore.filter_by_themes_none_match(
+                filtered_dataframe,
+                filter_args.excluded_themes
+            )
         if filter_args.filter_by_opening_tags:
             filtered_dataframe = PuzzleStore.filter_by_opening_tags_any_match(
                 filtered_dataframe,
@@ -207,10 +232,12 @@ class Filter(Command):
 
     @staticmethod
     def calc_filtered_themes(filter_args: FilterArgs) -> set[str]:
-        if filter_args.filter_by_themes is False:
-            return filter_args.store.get_themes()
-        else:
-            return filter_args.store.get_themes().intersection(set(filter_args.themes))
+        themes = filter_args.store.get_themes()
+        if filter_args.filter_by_themes:
+            themes = themes.intersection(set(filter_args.themes))
+        if filter_args.filter_excluded_themes:
+            themes = themes.difference(filter_args.excluded_themes)
+        return themes
 
 
 class Sample(AutosaveCommand):

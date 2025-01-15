@@ -93,6 +93,11 @@ class PuzzleStore:
         return puzzles_df[puzzles_df['Themes'].str.count(regex_pattern) == expected_matches]
 
     @staticmethod
+    def filter_by_themes_none_match(puzzles_df: pandas.DataFrame, themes: Collection[str]) -> pandas.DataFrame:
+        regex_pattern = PuzzleStore.build_none_match_regex_pattern(themes)
+        return puzzles_df[puzzles_df['Themes'].str.match(regex_pattern)]
+
+    @staticmethod
     def filter_by_opening_tags_any_match(
             puzzles_df: pandas.DataFrame,
             opening_tags: Collection[str]
@@ -119,6 +124,11 @@ class PuzzleStore:
                 regex += r'|'
             regex += r'\b' + tag + r'\b'
         return regex
+
+    @staticmethod
+    def build_none_match_regex_pattern(tags: Collection[str]) ->str:
+        # negative lookahead assertion with (?! ... )
+        return r'(?!.*(?:' + '|'.join(r'\b' + tag + r'\b' for tag in tags) + r'))'
 
     @staticmethod
     def combine_tags(own_tags: set[str], other_tags: set[str]) -> set[str]:
