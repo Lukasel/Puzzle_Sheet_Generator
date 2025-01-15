@@ -13,11 +13,15 @@ pip install .
 
 ## Usage
 
-CLI still in progress
+The program is designed to run as an interactive CLI app, so that the puzzle db stays in memory
+and doesn't have to be reloaded all the time.
+Run 
+```commandline
+puzzle_sheet_generator
+```
+to start the interactive CLI.
 
-Idea: Interactive CLI, so we don't have to reload the puzzle db all the time
-
-On start-up the program loads its config and the lichess database, then waits for user commands via interactive cli.
+On start-up the program loads its config and the lichess database, then waits for user commands.
 
 ### Concepts:
 - Store: A set of puzzles. Subset of the lichess puzzle database obtained by filtering via user specified criteria.
