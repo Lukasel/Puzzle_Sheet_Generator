@@ -22,10 +22,10 @@ class AppConfig:
         self.diagram_board_colors = None
         self.load_configuration()
 
-    def get(self, key: str):
+    def get(self, key: str) -> bool | str:
         return self.config[key]
 
-    def set(self, key: str, value: str | bool) -> bool:
+    def set(self, key: str, value: bool | str) -> bool:
         set_success = False
         if key in self.BOOLEAN_CONFIGS:
             set_success = self._set_boolean(key, value)

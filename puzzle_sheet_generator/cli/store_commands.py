@@ -2,11 +2,12 @@ import logging
 from argparse import ArgumentParser, Namespace
 
 from cliff.command import Command
-from model.puzzle_sheet import PuzzleSheet
-from model.puzzle_store import PuzzleStore
-from model.repository import PuzzleStoreRepository
 from pandas import DataFrame
 
+from puzzle_sheet_generator.cli.autosave_command import AutosaveCommand
+from puzzle_sheet_generator.model.puzzle_sheet import PuzzleSheet
+from puzzle_sheet_generator.model.puzzle_store import PuzzleStore
+from puzzle_sheet_generator.model.repository import PuzzleStoreRepository
 from puzzle_sheet_generator.psg_cliff import PSGApp
 from puzzle_sheet_generator.puzzle_database import lichess_puzzle_themes
 
@@ -212,7 +213,7 @@ class Filter(Command):
             return filter_args.store.get_themes().intersection(set(filter_args.themes))
 
 
-class Sample(Command):
+class Sample(AutosaveCommand):
     """Create a new sheet or add to a sheet by sampling a given number of puzzles from a store"""
 
     def __init__(self, app: PSGApp, app_args):
@@ -246,6 +247,7 @@ class Sample(Command):
                 sheet_id = self.app.puzzle_sheet_repository.get_id_for_name(parsed_args.sheet)
                 sheet.add(puzzles)
                 self.log.info(f'Added {parsed_args.amount} puzzles to sheet "{sheet.get_name()}" with id "{sheet_id}".')
+            self.autosave_sheet(sheet, sheet_id)
 
     def _validate_args(self, parsed_args: Namespace, store: PuzzleStore | None, sheet: PuzzleSheet | None) -> bool:
         if store is None:

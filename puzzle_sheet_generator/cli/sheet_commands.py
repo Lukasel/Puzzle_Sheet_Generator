@@ -9,12 +9,13 @@ from pathlib import Path
 import chess
 from cliff.command import Command
 
+from puzzle_sheet_generator.cli.autosave_command import AutosaveCommand
 from puzzle_sheet_generator.model.puzzle_sheet import PuzzleSheet
 from puzzle_sheet_generator.model.sheet_element import LichessPuzzle, PositionByFEN
 from puzzle_sheet_generator.psg_cliff import PSGApp
 
 
-class AddTo(Command):
+class AddTo(AutosaveCommand):
     """Add an element to a specific sheet"""
     puzzle_id_regex = re.compile(r'^[A-Za-z0-9]{5,6}$')
 
@@ -45,6 +46,8 @@ class AddTo(Command):
             else:
                 sheet.add([PositionByFEN(board)])
             self.log.info(f'The element was added to sheet "{sheet.get_name()}".')
+            sheet_id = self.app.puzzle_sheet_repository.get_id_for_name(parsed_args.sheet)
+            self.autosave_sheet(sheet, sheet_id)
 
     def _validate_args(
             self,
@@ -99,7 +102,7 @@ class Copy(Command):
             return False
         return True
 
-class Remove(Command):
+class Remove(AutosaveCommand):
     """Remove an element from a sheet"""
 
     def __init__(self, app: PSGApp, app_args):
@@ -121,6 +124,8 @@ class Remove(Command):
             if index is not None:
                 sheet.remove_by_index(index)
                 self.log.info(f'The element at index {index} was removed from sheet "{sheet.get_name()}".')
+                sheet_id = self.app.puzzle_sheet_repository.get_id_for_name(parsed_args.sheet)
+                self.autosave_sheet(sheet, sheet_id)
 
     def _validate_args(self, parsed_args: Namespace, sheet: PuzzleSheet | None) -> bool:
         if sheet is None:
@@ -128,7 +133,7 @@ class Remove(Command):
             return False
         return True
 
-class Reorder(Command):
+class Reorder(AutosaveCommand):
     """Reorder elements in a specific sheet. Swaps the positions of two elements."""
 
     def __init__(self, app: PSGApp, app_args):
@@ -151,6 +156,8 @@ class Reorder(Command):
             sheet[index_1], sheet[index_2] = sheet[index_2], sheet[index_1]
             self.log.info(f'The elements at the indices {index_1} and {index_2} '
                           f'in sheet "{sheet.get_name()}" have been swapped.')
+            sheet_id = self.app.puzzle_sheet_repository.get_id_for_name(parsed_args.sheet)
+            self.autosave_sheet(sheet, sheet_id)
 
     def _validate_args(self, parsed_args: Namespace, sheet: PuzzleSheet | None) -> bool:
         if sheet is None:
@@ -173,7 +180,7 @@ class Name(Command):
     def get_parser(self, prog_name) -> ArgumentParser:
         parser = super().get_parser(prog_name)
         parser.add_argument('sheet', help='Name or ID of the puzzle sheet.')
-        parser.add_argument('name', help='TNew name of the puzzle sheet.')
+        parser.add_argument('name', help='New name of the puzzle sheet.')
         return parser
 
     def take_action(self, parsed_args: Namespace) -> None:
@@ -193,7 +200,7 @@ class Name(Command):
             return False
         return True
 
-class Header(Command):
+class Header(AutosaveCommand):
     """Specify what will be printed in the header above the puzzles"""
 
     def __init__(self, app: PSGApp, app_args):
@@ -217,6 +224,8 @@ class Header(Command):
             if parsed_args.right_header is not None:
                 sheet.right_header = parsed_args.right_header
             self.log.info(f'The header of sheet "{sheet.get_name()}" has been set.')
+            sheet_id = self.app.puzzle_sheet_repository.get_id_for_name(parsed_args.sheet)
+            self.autosave_sheet(sheet, sheet_id)
 
     def _validate_args(self, parsed_args: Namespace, sheet: PuzzleSheet | None) -> bool:
         if sheet is None:

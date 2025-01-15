@@ -35,11 +35,9 @@ indent-width = 4
 target-version = "py311"
 
 [lint]
-# Disable "ARG002" unused-method-argument because we overwrite some tensorflow methods of which we don't use all arguments
-# Disable "F405" undefined-local-with-import-star-usage because we use basically all 30+ constants from data.constants in label_formats.py
 # Disbale "RUF005" collection-literal-concatenation because I consider collection concatenation more readable than unpacking
 select = ["ARG", "B", "C4", "E", "F", "I001", "PL", "PTH", "RUF", "SIM", "UP", "W"]
-ignore = ["ARG002", "F405", "RUF005"]
+ignore = ["RUF005"]
 
 # Allow fix for all enabled rules (when `--fix`) is provided.
 fixable = ["ALL"]
