@@ -46,7 +46,7 @@ Possible configurations:
 - delete: delete a sheet or store
   - `delete <id_or_name>`
 - Store specific commands:
-  - filter: create a store of puzzles by filtering from the db or an existing store
+  - filter: create a store of puzzles by filtering from the lichess database or an existing store
     - `filter <from_store> <new_store_name>` with options:
       - `-t <theme_1> <additional_theme>*`: themes have to spelled as in the lichess puzzle database. If multiple themes are supplied, a puzzle has to match all of them.
       - `-e <theme_1> <additional_theme>*`: excluded themes. Puzzles that match any of them will be filtered out.

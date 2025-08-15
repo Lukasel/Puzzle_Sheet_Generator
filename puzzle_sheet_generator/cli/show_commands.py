@@ -131,4 +131,4 @@ class Show(Lister):
             case PositionByFEN():
                 return '', sheet_element.get_fen(), '', '', '', ''
             case _:
-                raise Exception('Unexpected type of puzzle sheet element.')
+                raise Exception(f'Unexpected type "{type(sheet_element)}" of puzzle sheet element.')
