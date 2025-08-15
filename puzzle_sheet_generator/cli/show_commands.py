@@ -2,10 +2,10 @@ import logging
 from argparse import ArgumentParser, Namespace
 
 from cliff.lister import Lister
-from model.sheet_element import LichessPuzzle, PositionByFEN, SheetElement
 
 from puzzle_sheet_generator.model.puzzle_sheet import PuzzleSheet
 from puzzle_sheet_generator.model.puzzle_store import PuzzleStore
+from puzzle_sheet_generator.model.sheet_element import LichessPuzzle, PositionByFEN, SheetElement
 from puzzle_sheet_generator.psg_cliff import PSGApp
 
 puzzle_store_columns = ('StoreId', 'Name', 'nb puzzles', 'Themes', 'Openings', 'min_rating', 'max_rating')
