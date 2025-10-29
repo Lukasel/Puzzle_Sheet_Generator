@@ -27,7 +27,7 @@ class AddTo(AutosaveCommand):
     def get_parser(self, prog_name) -> ArgumentParser:
         parser = super().get_parser(prog_name)
         parser.add_argument('sheet', help = 'Name or ID of the puzzle sheet.')
-        parser.add_argument('puzzle', help = 'A Lichess puzzle id or a FEN string.')
+        parser.add_argument('puzzle', nargs='+', help = 'A Lichess puzzle id or a FEN string.')
         return parser
 
     def take_action(self, parsed_args) -> None:
@@ -35,11 +35,12 @@ class AddTo(AutosaveCommand):
         sheet = self.app.puzzle_sheet_repository.get(parsed_args.sheet)
         lichess_puzzle = None
         board = None
-        if self.puzzle_id_regex.match(parsed_args.puzzle):
-            lichess_puzzle = self.app.puzzle_store_repository.get_main_store().get_puzzle_by_id(parsed_args.puzzle)
+        puzzle = " ".join(parsed_args.puzzle).strip(" '\"")
+        if self.puzzle_id_regex.match(puzzle):
+            lichess_puzzle = self.app.puzzle_store_repository.get_main_store().get_puzzle_by_id(puzzle)
         else:
             with contextlib.suppress(ValueError):
-                board = chess.Board(parsed_args.puzzle)
+                board = chess.Board(puzzle)
         if self._validate_args(parsed_args, sheet, lichess_puzzle, board):
             if lichess_puzzle is not None:
                 sheet.add([lichess_puzzle])
