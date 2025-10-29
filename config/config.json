@@ -1,3 +1,4 @@
 {
+  "autosave_puzzle_sheets": true,
   "lichess_puzzle_db_path": "./data/lichess_db_puzzle.csv"
 }

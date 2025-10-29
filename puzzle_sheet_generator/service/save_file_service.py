@@ -51,7 +51,7 @@ class SaveFileService:
                 raise Exception(f'Unsupported type "{type(element)}" encountered while saving a puzzle sheet.')
 
     def load(self, app_config: AppConfig) -> list[PuzzleSheet]:
-        data_path = platformdirs.user_data_path(app_config.app_name)
+        data_path = platformdirs.user_data_path(app_config.app_name) / self.SHEETS_DIRECTORY
         return self.load_from_path(data_path)
 
     def load_from_path(self, load_path: Path) -> list[PuzzleSheet]:
@@ -62,9 +62,11 @@ class SaveFileService:
         if load_path.is_dir():
             loaded_sheets = []
             for fs_node in load_path.iterdir():
-                if fs_node.is_dir():
+                if fs_node.is_file():
                     loaded_sheets.append(self._load_from_file(fs_node))
             return loaded_sheets
+        else:
+            raise Exception(f'The path "{load_path}" has an unexpected filetype.')
 
     def _load_from_file(self, load_file_path: Path) -> PuzzleSheet:
         with load_file_path.open('r') as load_file:

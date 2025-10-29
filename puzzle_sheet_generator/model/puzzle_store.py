@@ -61,7 +61,8 @@ class PuzzleStore:
     def get_puzzle_by_id(self, puzzle_id: str) -> LichessPuzzle | None:
         puzzle_data = self.puzzle_df[self.puzzle_df['PuzzleId'] == puzzle_id]
         if puzzle_data is not None and not puzzle_data.empty:
-            return LichessPuzzle(puzzle_data.item())
+            assert len(puzzle_data.index) == 1
+            return LichessPuzzle(next(puzzle_data.itertuples(index=False)))
         else:
             return None
 
