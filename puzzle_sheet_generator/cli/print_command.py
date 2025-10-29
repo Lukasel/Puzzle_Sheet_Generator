@@ -8,7 +8,7 @@ from puzzle_sheet_generator.model.puzzle_sheet import PuzzleSheet
 from puzzle_sheet_generator.pdf_generation import generate_pdf
 from puzzle_sheet_generator.pdf_generation.Layout6Puzzles import Layout6Puzzles
 from puzzle_sheet_generator.pdf_generation.Layout12Puzzles import Layout12Puzzles
-from puzzle_sheet_generator.pdf_generation.PuzzleLayout import PageSettings, PuzzleLayout
+from puzzle_sheet_generator.pdf_generation.PuzzleLayout import HeaderFooterText, PageSettings, PuzzleLayout
 from puzzle_sheet_generator.psg_cliff import PSGApp
 
 
@@ -33,6 +33,7 @@ class Print(Command):
         parser.add_argument('out_file', help = 'Filepath to where the generated PDF is saved.')
         parser.add_argument('--left-header', default = '', help = 'Text in the top left header')
         parser.add_argument('--right-header', default = '', help = 'Text in the top right header')
+        parser.add_argument('--footer', default='', help = 'Text in the footer')
         return parser
 
     def take_action(self, parsed_args: Namespace) -> None:
@@ -44,9 +45,12 @@ class Print(Command):
                 sheet.left_header = parsed_args.left_header
             if parsed_args.right_header != '' and not parsed_args.right_header.isspace():
                 sheet.right_header = parsed_args.right_header
+            if parsed_args.footer  != '' and not parsed_args.footer.isspace():
+                sheet.footer = parsed_args.footer
             svgs = sheet.get_svgs(self.app.config)
             layout = self.get_layout(parsed_args)
-            generate_pdf.make_pdf_puzzle_page(out_path, svgs, sheet.left_header, sheet.right_header, layout)
+            header_footer_text = HeaderFooterText(sheet.left_header, sheet.right_header, sheet.footer)
+            generate_pdf.make_pdf_puzzle_page(out_path, svgs, header_footer_text, layout)
             self.log.info(f'Generated puzzle sheet "{sheet.get_name()}" at path {out_path}.')
 
     def _validate_args(self, parsed_args: Namespace, sheet: PuzzleSheet | None, out_path: Path) -> bool:

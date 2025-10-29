@@ -13,12 +13,14 @@ class PuzzleSheet:
             name: str,
             elements: list[SheetElement] | None = None,
             left_header: str = '',
-            right_header: str = ''
+            right_header: str = '',
+            footer: str = ''
     ):
         self.elements = elements if elements is not None else []
         self.name = name
         self.left_header = left_header
         self.right_header = right_header
+        self.footer = footer
 
     def __len__(self):
         return len(self.elements)

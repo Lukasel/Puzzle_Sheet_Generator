@@ -16,6 +16,7 @@ class SaveFileService:
     ELEMENTS_KEY = 'elements'
     LEFT_HEADER_KEY = 'left_header'
     RIGHT_HEADER_KEY = 'right_header'
+    FOOTER_TEXT_KEY = 'footer_text'
     PUZZLE_ID_KEY = 'PuzzleId'
     FEN_KEY = 'FEN'
     JSON_FILE_TYPE = '.json'
@@ -35,7 +36,8 @@ class SaveFileService:
             self.NAME_KEY: puzzle_sheet.name,
             self.ELEMENTS_KEY: save_elements,
             self.LEFT_HEADER_KEY: puzzle_sheet.left_header,
-            self.RIGHT_HEADER_KEY: puzzle_sheet.right_header
+            self.RIGHT_HEADER_KEY: puzzle_sheet.right_header,
+            self.FOOTER_TEXT_KEY: puzzle_sheet.footer,
         }
         with save_path.open('w') as save_file:
             json.dump(save_data, save_file, ensure_ascii=False)
@@ -77,15 +79,16 @@ class SaveFileService:
             right_header = data.get(self.RIGHT_HEADER_KEY)
             if name is None or elements_list is None or left_header is None or right_header is None:
                 raise Exception(f'The save file under "{load_file_path}" is missing required data.')
+            footer = data.get(self.FOOTER_TEXT_KEY, '')
             elements = [self._from_save_element(save_element) for save_element in elements_list]
             elements = list(filter(lambda e: e is not None, elements))
-            return PuzzleSheet(name, elements, left_header, right_header)
+            return PuzzleSheet(name, elements, left_header, right_header, footer)
 
     def _from_save_element(self, save_element: dict) -> SheetElement | None:
-        puzzleId = save_element.get(self.PUZZLE_ID_KEY)
+        puzzle_id = save_element.get(self.PUZZLE_ID_KEY)
         fen = save_element.get(self.FEN_KEY)
-        if puzzleId is not None and self.lichess_puzzle_database is not None:
-            lichess_puzzle = self.lichess_puzzle_database.get_puzzle_by_id(puzzleId)
+        if puzzle_id is not None and self.lichess_puzzle_database is not None:
+            lichess_puzzle = self.lichess_puzzle_database.get_puzzle_by_id(puzzle_id)
             if lichess_puzzle is not None:
                 return lichess_puzzle
 

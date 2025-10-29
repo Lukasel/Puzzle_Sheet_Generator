@@ -54,4 +54,4 @@ if __name__ == '__main__':
     puzzles = lichess_puzzle_db.find_mate(2)
     puzzles = lichess_puzzle_db.filter_by_rating(puzzles.puzzle_df, 1250, 1400).sample(12)
     svgs = [make_svg(puzzle['FEN'], puzzle['Moves']) for _, puzzle in puzzles.iterrows()]
-    make_pdf_puzzle_page('output/test.pdf', svgs, 'Matt', 'Matt in 2')
+    make_pdf_puzzle_page('output/test.pdf', svgs, ('Matt', 'Matt in 2', ''))

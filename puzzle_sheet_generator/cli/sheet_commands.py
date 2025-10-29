@@ -214,6 +214,7 @@ class Header(AutosaveCommand):
         parser.add_argument('sheet', help='Name or ID of the puzzle sheet.')
         parser.add_argument('-l', '--left-header', help='Text in the top left header')
         parser.add_argument('-r', '--right-header', help='Text in the top right header')
+        parser.add_argument('-f', '--footer', help='Text in the footer')
         return parser
 
     def take_action(self, parsed_args: Namespace) -> None:
@@ -224,6 +225,8 @@ class Header(AutosaveCommand):
                 sheet.left_header = parsed_args.left_header
             if parsed_args.right_header is not None:
                 sheet.right_header = parsed_args.right_header
+            if parsed_args.footer is not None:
+                sheet.footer = parsed_args.footer
             self.log.info(f'The header of sheet "{sheet.get_name()}" has been set.')
             sheet_id = self.app.puzzle_sheet_repository.get_id_for_name(parsed_args.sheet)
             self.autosave_sheet(sheet, sheet_id)

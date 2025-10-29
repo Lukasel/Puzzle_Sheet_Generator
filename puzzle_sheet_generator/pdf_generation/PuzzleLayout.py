@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from collections import namedtuple
 
 import chess
 from lxml import etree
@@ -9,6 +10,7 @@ from reportlab.lib.units import cm
 from reportlab.pdfgen import canvas
 from svglib import svglib
 
+HeaderFooterText = namedtuple('HeaderFooterText', ('left_header', 'right_header', 'footer'))
 
 class PageSettings:
     def __init__(self):
@@ -17,8 +19,10 @@ class PageSettings:
         self.margin_right = 1.5 * cm
         self.margin_bottom = cm
         self.font = 'Helvetica-Bold'
-        self.font_size = 18
-        self.header_height = 1.5 * cm + self.font_size
+        self.header_font_size = 18
+        self.header_height = 1.5 * cm + self.header_font_size
+        self.footer_font_size = 10
+        self.footer_height = cm + self.footer_font_size
 
     def margin_left_right(self) -> float:
         return self.margin_left + self.margin_right
@@ -64,6 +68,6 @@ def svg_to_rgl(svg: str) -> Drawing | None:
     """
     svg_root = etree.fromstring(svg)
     if svg_root is None:
-        return
+        return None
     svg_renderer = svglib.SvgRenderer("./fake.svg")
     return svg_renderer.render(svg_root)
