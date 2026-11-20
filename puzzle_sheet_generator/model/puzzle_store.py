@@ -29,7 +29,7 @@ class PuzzleStore:
     def combine(self, other_store: Self, name: str) -> Self:
         """Create a new puzzle store, that combines this and the other puzzle stores puzzles into one store."""
         combined_df = self.puzzle_df.combine_first(other_store.puzzle_df)
-        combined_opening_tags = self.combine_tags(self._opening_tags, other_store.opening_tags)
+        combined_opening_tags = self.combine_tags(self._opening_tags, other_store._opening_tags)
         return PuzzleStore(
             combined_df,
             name,
