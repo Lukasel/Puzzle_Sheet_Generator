@@ -47,7 +47,7 @@ def make_header(page_canvas: canvas.Canvas, page_settings: PageSettings, left_te
     text_height = page_settings.pagesize[1] - cm - page_settings.header_font_size
     page_canvas.setFont(page_settings.font, page_settings.header_font_size)
     page_canvas.drawString(page_settings.margin_left, text_height, left_text)
-    page_canvas.drawRightString(page_settings.margin_right, text_height, right_text)
+    page_canvas.drawRightString(page_settings.pagesize[0] - page_settings.margin_right, text_height, right_text)
     page_canvas.line(
         cm,
         page_settings.pagesize[1] - page_settings.header_height,
